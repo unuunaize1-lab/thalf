@@ -134,7 +134,7 @@ export default function AdminLoginPage() {
                   className="absolute right-2 text-parchment/50 hover:text-cream transition-colors p-1"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <EyeOff className="w-4 h-4 text-gold" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>

@@ -9,7 +9,7 @@ import type { NextRequest } from 'next/server';
 // requireRole(), and requirePermission() server-side.
 // ---------------------------------------------------------------------------
 
-const AUTH_PAGES = ['/login', '/register', '/forgot-password'];
+const AUTH_PAGES = ['/login', '/register', '/forgot-password', '/admin-login'];
 const PROTECTED_CUSTOMER_PAGES = ['/profile'];
 const PROTECTED_ADMIN_PAGES = ['/admin'];
 
@@ -57,6 +57,14 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const sessionToken = request.cookies.get('thalf_session')?.value;
 
+  // Always allow /admin-login on all domains
+  if (pathname === '/admin-login') {
+    if (sessionToken) {
+      return NextResponse.redirect(new URL('/admin/orders', request.url));
+    }
+    return NextResponse.next();
+  }
+
   // -----------------------------------------------------------------------
   // 1. Production: www.thalf.store → thalf.store (canonical redirect)
   // -----------------------------------------------------------------------
@@ -87,18 +95,21 @@ export function proxy(request: NextRequest) {
   }
 
   // -----------------------------------------------------------------------
-  // 3. Customer domain (production): Block /admin/* pages
+  // 3. Customer domain (production): Block /admin/* pages (except /admin-login)
   // -----------------------------------------------------------------------
   if (!isAdminSubdomain(host) && isProductionHost(host)) {
-    if (pathname.startsWith('/admin')) {
-      // Return 404 — do NOT redirect to admin subdomain (information leakage)
-      return new NextResponse('Not Found', { status: 404 });
+    if (pathname.startsWith('/admin') && pathname !== '/admin-login') {
+      // Allow /admin routes if user has session or is accessing /admin
+      if (!sessionToken) {
+        const loginUrl = new URL('/admin-login', request.url);
+        loginUrl.searchParams.set('redirect', pathname);
+        return NextResponse.redirect(loginUrl);
+      }
     }
   }
 
   // -----------------------------------------------------------------------
   // 4. Guard protected routes — session cookie presence check
-  //    (This is NOT authorization — it's a UX redirect for unauthenticated users)
   // -----------------------------------------------------------------------
 
   // Guard customer profile pages
@@ -118,7 +129,7 @@ export function proxy(request: NextRequest) {
   );
 
   if (isProtectedAdminRoute && !sessionToken) {
-    const loginUrl = new URL('/login', request.url);
+    const loginUrl = new URL('/admin-login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
@@ -128,11 +139,7 @@ export function proxy(request: NextRequest) {
   // -----------------------------------------------------------------------
   const isAuthPageRoute = AUTH_PAGES.some(route => pathname.startsWith(route));
   if (isAuthPageRoute && sessionToken) {
-    // On admin subdomain, redirect to admin dashboard
-    if (isAdminSubdomain(host)) {
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
-    }
-    return NextResponse.redirect(new URL('/profile/dashboard', request.url));
+    return NextResponse.redirect(new URL('/admin/orders', request.url));
   }
 
   return NextResponse.next();
@@ -142,6 +149,7 @@ export const config = {
   matcher: [
     '/profile/:path*',
     '/admin/:path*',
+    '/admin-login',
     '/login',
     '/register',
     '/forgot-password',
