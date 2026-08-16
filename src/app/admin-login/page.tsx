@@ -105,7 +105,15 @@ export default function AdminLoginPage() {
                   inputMode="tel"
                   required
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  onChange={(e) => {
+                    let val = e.target.value.replace(/\D/g, '');
+                    if (val.length > 10 && val.startsWith('91')) {
+                      val = val.substring(2);
+                    } else if (val.length === 11 && val.startsWith('0')) {
+                      val = val.substring(1);
+                    }
+                    setPhone(val.slice(0, 10));
+                  }}
                   className="w-full px-3 py-2 text-xs text-cream placeholder-parchment/30 bg-transparent focus:outline-none font-mono"
                   placeholder="9876500000"
                 />
