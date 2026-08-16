@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: thalf-chocolates
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: thalf-db
+          property: connectionString
+
+databases:
+  - name: thalf-db
+    databaseName: thalf_db
+    user: thalf_user
+    plan: free
+    region: singapore
