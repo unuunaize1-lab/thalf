@@ -1,0 +1,612 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+enum RoleType {
+  CUSTOMER
+  ADMIN
+  SUPER_ADMIN
+  CONCIERGE
+}
+
+enum OrderStatus {
+  PENDING_CONFIRMATION
+  CONFIRMED
+  PREPARING
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+enum PaymentProvider {
+  WHATSAPP_ASSISTED
+  CASH_ON_DELIVERY
+  RAZORPAY
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum ReturnRequestStatus {
+  REQUESTED
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  RESOLVED
+}
+
+enum HamperPricingMode {
+  FIXED_PRICE
+  QUOTE_REQUIRED
+}
+
+enum QuoteRequestStatus {
+  NEW
+  REVIEWING
+  QUOTED
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+// 1. USERS
+model User {
+  id              String         @id @default(cuid())
+  email           String?        @unique
+  name            String?
+  phone           String?        @unique
+  emailVerified   DateTime?
+  phoneVerifiedAt DateTime?
+  image           String?
+  roleId          String
+  role            Role           @relation(fields: [roleId], references: [id])
+  passwordHash    String?
+  sessions        Session[]
+  addresses       Address[]
+  orders          Order[]
+  cart            Cart?
+  wishlists       Wishlist[]
+  reviews         Review[]
+  notifications        Notification[]
+  pushSubscriptions    AdminPushSubscription[]
+  auditLogs            AuditLog[]
+  couponUsages    CouponUsage[]
+  quoteRequests   HamperQuoteRequest[]
+  isDeleted       Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([email])
+}
+
+// 2. ROLES
+model Role {
+  id          String      @id @default(cuid())
+  name        RoleType    @unique
+  permissions String[]
+  users       User[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// 3. ADDRESSES
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  phone      String
+  street     String
+  city       String
+  state      String
+  postalCode String
+  country    String   @default("India")
+  isDefault  Boolean  @default(false)
+  orders     Order[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// 4. CATEGORIES
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// 5. COLLECTIONS
+model Collection {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  description  String?
+  bannerImage  String?
+  startDate    DateTime?
+  endDate      DateTime?
+  isActive     Boolean   @default(true)
+  isFeatured   Boolean   @default(false)
+  displayOrder Int       @default(0)
+  products     Product[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([isActive])
+  @@index([startDate, endDate])
+}
+
+// 6. PRODUCTS
+model Product {
+  id                       String               @id @default(cuid())
+  name                     String
+  slug                     String               @unique
+  sku                      String               @unique
+  shortDescription         String?
+  description              String
+  price                    Decimal              @db.Decimal(10, 2)
+  comparePrice             Decimal?             @db.Decimal(10, 2)
+  status                   String               @default("ACTIVE") // ACTIVE, DRAFT, ARCHIVED
+  featured                 Boolean              @default(false)
+  tags                     String[]
+  cacaoPercentage          Int?
+  weight                   String?
+  ingredients              String?
+  allergenInfo             String?
+  flavourProfile           String?
+  storageInstructions      String?
+  shelfLife                String?
+  tastingNotes             String[]
+  seoTitle                 String?
+  seoDescription           String?
+  categoryId               String
+  category                 Category             @relation(fields: [categoryId], references: [id])
+  collections              Collection[]
+
+  // Hamper & Pricing Mode Extensions
+  isHamper                 Boolean              @default(false)
+  hamperType               String?              // e.g. Birthday Hampers, Wedding Hampers, Personalized Hampers, etc.
+  pricingMode              HamperPricingMode    @default(FIXED_PRICE)
+  startingPrice            Decimal?             @db.Decimal(10, 2)
+  minQuantity              Int                  @default(1)
+  maxQuantity              Int?
+
+  // Internal Cost Components (Admin Only)
+  costChocolate            Decimal?             @db.Decimal(10, 2)
+  costPackaging            Decimal?             @db.Decimal(10, 2)
+  costPersonalization      Decimal?             @db.Decimal(10, 2)
+  costAssembly             Decimal?             @db.Decimal(10, 2)
+  costOther                Decimal?             @db.Decimal(10, 2)
+  costDelivery             Decimal?             @db.Decimal(10, 2)
+  margin                   Decimal?             @db.Decimal(10, 2)
+  suggestedSellingPrice    Decimal?             @db.Decimal(10, 2)
+
+  // Customization Options Toggles
+  allowChocolateSelection  Boolean              @default(false)
+  allowPersonalizedMessage Boolean              @default(false)
+  allowCustomPackaging     Boolean              @default(false)
+  allowCustomRibbon        Boolean              @default(false)
+  allowCustomBranding      Boolean              @default(false)
+  allowCorporateBranding   Boolean              @default(false)
+
+  // Relations
+  images                   ProductImage[]
+  inventory                Inventory?
+  orderItems               OrderItem[]
+  cartItems                CartItem[]
+  wishlists                Wishlist[]
+  reviews                  Review[]
+  pricingTiers             HamperPricingTier[]
+  quoteRequests            HamperQuoteRequest[]
+
+  isDeleted                Boolean              @default(false)
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime             @updatedAt
+
+  @@index([slug])
+  @@index([sku])
+  @@index([categoryId])
+}
+
+// 6b. HAMPER PRICING TIERS
+model HamperPricingTier {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  minQuantity Int
+  maxQuantity Int?
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+}
+
+// 6c. HAMPER QUOTE REQUESTS
+model HamperQuoteRequest {
+  id                String             @id @default(cuid())
+  quoteNumber       String             @unique
+  customerId        String?
+  customer          User?              @relation(fields: [customerId], references: [id])
+  productId         String?
+  product           Product?           @relation(fields: [productId], references: [id])
+  name              String
+  phone             String
+  email             String?
+  hamperType        String
+  quantity          Int
+  budget            Decimal?           @db.Decimal(10, 2)
+  occasion          String?
+  deliveryDate      DateTime?
+  preferences       String?
+  personalization   String?
+  message           String?
+  status            QuoteRequestStatus @default(NEW)
+  adminNotes        String?
+
+  // Admin Quotation Action Fields
+  quotedUnitPrice   Decimal?           @db.Decimal(10, 2)
+  quotedQuantity    Int?
+  additionalCharges Decimal?           @default(0) @db.Decimal(10, 2)
+  discountAmount    Decimal?           @default(0) @db.Decimal(10, 2)
+  quotedAmount      Decimal?           @db.Decimal(10, 2)
+  quoteValidUntil   DateTime?
+  convertedOrderId  String?
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([customerId])
+  @@index([productId])
+  @@index([status])
+  @@index([quoteNumber])
+}
+
+// 7. PRODUCT IMAGES
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  publicId  String?
+  alt       String?
+  width     Int?
+  height    Int?
+  format    String?
+  bytes     Int?
+  isDefault Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+
+  @@index([productId])
+}
+
+// 8. INVENTORY
+model Inventory {
+  id            String         @id @default(cuid())
+  productId     String         @unique
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockQuantity Int            @default(0)
+  reservedStock Int            @default(0)
+  reorderLevel  Int            @default(5)
+  logs          InventoryLog[]
+  updatedAt     DateTime       @updatedAt
+}
+
+// 8b. INVENTORY LOGS
+model InventoryLog {
+  id               String    @id @default(cuid())
+  inventoryId      String
+  inventory        Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  productId        String
+  previousQuantity Int
+  adjustment       Int
+  newQuantity      Int
+  reason           String
+  note             String?
+  actorId          String?
+  createdAt        DateTime  @default(now())
+
+  @@index([inventoryId])
+  @@index([productId])
+}
+
+// 9. ORDERS
+model Order {
+  id              String               @id @default(cuid())
+  orderNumber     String               @unique
+  userId          String?
+  user            User?                @relation(fields: [userId], references: [id])
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  addressId       String?
+  shippingAddress Address?             @relation(fields: [addressId], references: [id])
+  street          String
+  city            String
+  state           String
+  postalCode      String
+  country         String               @default("India")
+  deliveryNotes   String?
+  status          OrderStatus          @default(PENDING_CONFIRMATION)
+  subtotal        Decimal              @db.Decimal(10, 2)
+  discountAmount  Decimal              @default(0) @db.Decimal(10, 2)
+  taxAmount       Decimal              @default(0) @db.Decimal(10, 2)
+  shippingAmount  Decimal              @default(0) @db.Decimal(10, 2)
+  giftWrap        Boolean              @default(false)
+  giftWrapAmount  Decimal              @default(0) @db.Decimal(10, 2)
+  totalAmount     Decimal              @db.Decimal(10, 2)
+  giftMessage     String?
+  giftRibbon      String?
+  orderItems      OrderItem[]
+  payment         Payment?
+  statusHistory   OrderStatusHistory[]
+  returnRequests  ReturnRequest[]
+  couponUsages             CouponUsage[]
+  whatsappNotificationStatus String?              @default("PENDING")
+  whatsappNotifiedAt         DateTime?
+  whatsappErrorMessage       String?
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime             @updatedAt
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@index([customerPhone])
+}
+
+// 10. ORDER ITEMS
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  totalPrice Decimal  @db.Decimal(10, 2)
+}
+
+// 11. ORDER STATUS HISTORY
+model OrderStatusHistory {
+  id             String       @id @default(cuid())
+  orderId        String
+  order          Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  previousStatus OrderStatus?
+  newStatus      OrderStatus
+  changedBy      String
+  note           String?
+  createdAt      DateTime     @default(now())
+
+  @@index([orderId])
+}
+
+// 11b. RETURN REQUESTS
+model ReturnRequest {
+  id            String              @id @default(cuid())
+  orderId       String
+  order         Order               @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderNumber   String
+  customerName  String
+  customerPhone String
+  reason        String
+  requestType   String              @default("RETURN")
+  status        ReturnRequestStatus @default(REQUESTED)
+  adminNote     String?
+  photos        String[]
+  resolvedAt    DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@index([orderId])
+  @@index([orderNumber])
+}
+
+// 12. PAYMENTS
+model Payment {
+  id             String          @id @default(cuid())
+  orderId        String          @unique
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider       PaymentProvider @default(WHATSAPP_ASSISTED)
+  status         PaymentStatus   @default(UNPAID)
+  amount         Decimal         @db.Decimal(10, 2)
+  currency       String          @default("INR")
+  transactionRef String?         @unique
+  paidAt         DateTime?
+  refundId       String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+// 13. COUPONS
+model Coupon {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  type        DiscountType
+  value       Decimal       @db.Decimal(10, 2)
+  minSpend    Decimal?      @db.Decimal(10, 2)
+  maxDiscount Decimal?      @db.Decimal(10, 2)
+  usageLimit  Int?
+  timesUsed   Int           @default(0)
+  expiresAt   DateTime?
+  isActive    Boolean       @default(true)
+  usages      CouponUsage[]
+  createdAt   DateTime      @default(now())
+}
+
+// 14. COUPON USAGE
+model CouponUsage {
+  id        String   @id @default(cuid())
+  couponId  String
+  coupon    Coupon   @relation(fields: [couponId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  usedAt    DateTime @default(now())
+}
+
+// 15. CART
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+}
+
+// 16. CART ITEMS
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+}
+
+// 17. WISHLIST
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+// 18. REVIEWS
+model Review {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  rating     Int
+  comment    String
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+// 19. NOTIFICATIONS
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+// 20. MEDIA
+model Media {
+  id        String   @id @default(cuid())
+  filename  String
+  url       String
+  mimeType  String
+  size      Int
+  createdAt DateTime @default(now())
+}
+
+// 21. HOMEPAGE CMS
+model HomepageCMS {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  contentJson Json
+  updatedAt   DateTime @updatedAt
+}
+
+// 22. SETTINGS
+model Settings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// 23. AUDIT LOGS
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+// 25. SESSIONS
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+// 26. ADMIN PUSH SUBSCRIPTIONS
+model AdminPushSubscription {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint    String    @unique
+  p256dh      String
+  auth        String
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+// 27. GALLERY IMAGES (Marquee)
+model GalleryImage {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  publicId  String?
+  alt       String   @default("THALF Client Moment")
+  caption   String?
+  row       Int      @default(1)
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, row, sortOrder])
+}
+

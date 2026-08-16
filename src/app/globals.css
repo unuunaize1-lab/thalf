@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-gold: #C5A059;
+  --color-gold-light: #E6D5B8;
+  --color-gold-dark: #9A7A3A;
+  --color-dark: #1F1610;
+  --color-obsidian: #120B07;
+  --color-cream: #FAF7F2;
+  --color-champagne: #F3EEE3;
+  --color-cacao: #2C1A11;
+  --color-parchment: #E8E2D5;
+  --color-taupe: #8C7E72;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-dark);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Editorial Typography Helpers */
+h1, h2, h3, h4, .font-editorial {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+.poetic-italic {
+  font-family: var(--font-cormorant), Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.tracking-editorial {
+  letter-spacing: 0.25em;
+}
+
+.tracking-ultra {
+  letter-spacing: 0.35em;
+}
+
+/* Gold Gradient Shimmer */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #E6D5B8 0%, #C5A059 50%, #9A7A3A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-border {
+  border-image: linear-gradient(135deg, #E6D5B8 0%, #C5A059 50%, #9A7A3A 100%) 1;
+}
+
+.gold-glow {
+  box-shadow: 0 0 25px rgba(197, 160, 89, 0.25);
+}
+
+/* Luxury Card Shadow & Hover */
+.shadow-lux {
+  box-shadow: 0 10px 30px -10px rgba(31, 22, 16, 0.06);
+}
+
+.shadow-lux-hover {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.shadow-lux-hover:hover {
+  box-shadow: 0 20px 40px -15px rgba(31, 22, 16, 0.12);
+  transform: translateY(-3px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D9D0C1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C5A059;
+}
