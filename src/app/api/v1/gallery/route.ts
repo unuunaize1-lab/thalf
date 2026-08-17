@@ -23,8 +23,24 @@ const DEFAULT_GALLERY_IMAGES = [
     imageUrl: '/images/gallery/gallery-3.jpg',
     alt: 'THALF Client Moment 3',
     caption: 'Bespoke corporate & personal gifting',
-    row: 2,
+    row: 1,
     sortOrder: 3,
+  },
+  {
+    id: 'default-gal-4',
+    imageUrl: '/images/gallery/gallery-4.jpg',
+    alt: 'THALF Client Moment 4',
+    caption: 'Artisanal chocolate presentation',
+    row: 2,
+    sortOrder: 4,
+  },
+  {
+    id: 'default-gal-5',
+    imageUrl: '/images/gallery/gallery-5.jpg',
+    alt: 'THALF Client Moment 5',
+    caption: 'Signature THALF chocolate box',
+    row: 2,
+    sortOrder: 5,
   },
 ];
 

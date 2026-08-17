@@ -34,8 +34,24 @@ const DEFAULT_GALLERY_IMAGES: GalleryImageItem[] = [
     imageUrl: '/images/gallery/gallery-3.jpg',
     alt: 'THALF Client Moment 3',
     caption: 'Bespoke corporate & personal gifting',
-    row: 2,
+    row: 1,
     sortOrder: 3,
+  },
+  {
+    id: 'default-gal-4',
+    imageUrl: '/images/gallery/gallery-4.jpg',
+    alt: 'THALF Client Moment 4',
+    caption: 'Artisanal chocolate presentation',
+    row: 2,
+    sortOrder: 4,
+  },
+  {
+    id: 'default-gal-5',
+    imageUrl: '/images/gallery/gallery-5.jpg',
+    alt: 'THALF Client Moment 5',
+    caption: 'Signature THALF chocolate box',
+    row: 2,
+    sortOrder: 5,
   },
 ];
 
@@ -73,9 +89,9 @@ export function ClientPhotoGallerySection() {
   const finalRow1 = row1Images.length > 0 ? row1Images : displayImages.slice(0, Math.ceil(displayImages.length / 2));
   const finalRow2 = row2Images.length > 0 ? row2Images : displayImages.slice(Math.ceil(displayImages.length / 2));
 
-  // Repeat sequence 5 times to guarantee seamless 4K infinite looping
-  const row1Sequence = [...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1];
-  const row2Sequence = [...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2];
+  // Quadruple sequence to guarantee smooth 4K infinite looping
+  const row1Sequence = [...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1];
+  const row2Sequence = [...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2];
 
   return (
     <section className="bg-obsidian text-cream py-24 relative overflow-hidden border-t border-b border-gold/20">
