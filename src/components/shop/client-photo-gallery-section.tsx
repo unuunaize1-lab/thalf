@@ -16,7 +16,7 @@ const DEFAULT_GALLERY_IMAGES: GalleryImageItem[] = [
   {
     id: 'default-gal-1',
     imageUrl: '/images/gallery/gallery-1.jpg',
-    alt: 'THALF Artisanal Moment',
+    alt: 'THALF Client Moment 1',
     caption: 'Handcrafted luxury chocolate hamper',
     row: 1,
     sortOrder: 1,
@@ -24,7 +24,7 @@ const DEFAULT_GALLERY_IMAGES: GalleryImageItem[] = [
   {
     id: 'default-gal-2',
     imageUrl: '/images/gallery/gallery-2.jpg',
-    alt: 'THALF Celebration Box',
+    alt: 'THALF Client Moment 2',
     caption: 'Specially curated festive collection',
     row: 1,
     sortOrder: 2,
@@ -32,40 +32,15 @@ const DEFAULT_GALLERY_IMAGES: GalleryImageItem[] = [
   {
     id: 'default-gal-3',
     imageUrl: '/images/gallery/gallery-3.jpg',
-    alt: 'THALF Signature Gift Box',
+    alt: 'THALF Client Moment 3',
     caption: 'Bespoke corporate & personal gifting',
     row: 2,
     sortOrder: 3,
-  },
-  {
-    id: 'default-gal-4',
-    imageUrl: '/images/hero-chocolate.png',
-    alt: 'THALF Master Creation',
-    caption: 'Balanced sweetness & rich cacao',
-    row: 2,
-    sortOrder: 4,
-  },
-  {
-    id: 'default-gal-5',
-    imageUrl: '/images/behind-the-scenes-atelier.png',
-    alt: 'THALF Atelier Crafting',
-    caption: 'Behind the scenes at our chocolate atelier',
-    row: 1,
-    sortOrder: 5,
-  },
-  {
-    id: 'default-gal-6',
-    imageUrl: '/images/cacao-harvest.png',
-    alt: 'Single Origin Cacao Reserve',
-    caption: 'Ethically sourced single-origin cocoa beans',
-    row: 2,
-    sortOrder: 6,
   },
 ];
 
 export function ClientPhotoGallerySection() {
   const [images, setImages] = useState<GalleryImageItem[]>(DEFAULT_GALLERY_IMAGES);
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -81,8 +56,6 @@ export function ClientPhotoGallerySection() {
       } catch (err) {
         console.error('[GallerySection] Failed to load gallery images:', err);
         if (isMounted) setImages(DEFAULT_GALLERY_IMAGES);
-      } finally {
-        if (isMounted) setLoaded(true);
       }
     }
     loadGallery();
@@ -100,9 +73,9 @@ export function ClientPhotoGallerySection() {
   const finalRow1 = row1Images.length > 0 ? row1Images : displayImages.slice(0, Math.ceil(displayImages.length / 2));
   const finalRow2 = row2Images.length > 0 ? row2Images : displayImages.slice(Math.ceil(displayImages.length / 2));
 
-  // Quadruple sequences to ensure zero visual gaps across wide 4K viewports during continuous marquee animation
-  const row1Sequence = [...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1];
-  const row2Sequence = [...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2];
+  // Repeat sequence 5 times to guarantee seamless 4K infinite looping
+  const row1Sequence = [...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1];
+  const row2Sequence = [...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2];
 
   return (
     <section className="bg-obsidian text-cream py-24 relative overflow-hidden border-t border-b border-gold/20">
@@ -129,14 +102,14 @@ export function ClientPhotoGallerySection() {
         .animate-marquee-left {
           display: flex;
           width: max-content;
-          animation: marqueeLeft 45s linear infinite;
+          animation: marqueeLeft 35s linear infinite;
           will-change: transform;
         }
 
         .animate-marquee-right {
           display: flex;
           width: max-content;
-          animation: marqueeRight 45s linear infinite;
+          animation: marqueeRight 35s linear infinite;
           will-change: transform;
         }
 
