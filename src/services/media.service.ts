@@ -32,16 +32,34 @@ export class MediaService {
     if (mediaList.length === 0) {
       const initialAssets = [
         {
-          filename: 'hero-chocolate.png',
-          url: '/images/hero-chocolate.png',
-          mimeType: 'image/png',
-          size: 1258291,
+          filename: 'date-chocolate.jpeg',
+          url: '/images/choclates/date-chocolate.jpeg',
+          mimeType: 'image/jpeg',
+          size: 55087,
         },
         {
-          filename: 'cacao-harvest.png',
-          url: '/images/cacao-harvest.png',
-          mimeType: 'image/png',
-          size: 2202009,
+          filename: 'dates-chocolate.jpeg',
+          url: '/images/choclates/dates-chocolate.jpeg',
+          mimeType: 'image/jpeg',
+          size: 47222,
+        },
+        {
+          filename: 'kunafa-pistachio.jpeg',
+          url: '/images/choclates/kunafa-pistachio.jpeg',
+          mimeType: 'image/jpeg',
+          size: 47771,
+        },
+        {
+          filename: 'lollypop.jpeg',
+          url: '/images/choclates/lollypop.jpeg',
+          mimeType: 'image/jpeg',
+          size: 47919,
+        },
+        {
+          filename: 'rock-chocolate.jpeg',
+          url: '/images/choclates/rock-chocolate.jpeg',
+          mimeType: 'image/jpeg',
+          size: 54692,
         },
       ];
 
