@@ -20,8 +20,18 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: 'THALF | Haute Confectionery & Bespoke Cacao Atelier',
-  description: 'Genuinely handmade, single-origin Wayanad cacao chocolates presented with supreme editorial luxury and artisanal restraint.',
+  title: 'THALF | Homemade sweetness, wrapped in memories',
+  description: 'Handcrafted luxury chocolates made with pure cocoa and premium ingredients.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.ico'],
+    apple: [
+      { url: '/favicon.png' },
+    ],
+  },
 };
 
 export default function RootLayout({
