@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Eye, ShoppingBag, Check, MessageCircle } from 'lucide-react';
@@ -15,6 +15,9 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [addingState, setAddingState] = useState<Record<string, 'idle' | 'adding' | 'success'>>({});
+
+  const bgVideoRef = useRef<HTMLVideoElement>(null);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const [heroConfig, setHeroConfig] = useState({
     title: 'Chocolate, crafted differently.',
@@ -55,6 +58,21 @@ export default function HomePage() {
       }
     }
     loadData();
+  }, []);
+
+  useEffect(() => {
+    [bgVideoRef, heroVideoRef].forEach((ref) => {
+      if (ref.current) {
+        ref.current.defaultMuted = true;
+        ref.current.muted = true;
+        const playPromise = ref.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('Autoplay prevented or delayed:', err);
+          });
+        }
+      }
+    });
   }, []);
 
   const handleDirectAddToBag = (product: Product, e: React.MouseEvent) => {
@@ -148,14 +166,16 @@ export default function HomePage() {
         {/* Background ambient video layer */}
         <div className="absolute inset-0 z-0 overflow-hidden opacity-20 pointer-events-none">
           <video
+            ref={bgVideoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
+            poster="/images/hero-chocolate.png"
             className="w-full h-full object-cover filter blur-[4px] scale-105"
           >
             <source src="/videos/hero-video.mp4" type="video/mp4" />
-            <source src="/videos/1 (2).mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/85 to-obsidian/60" />
         </div>
@@ -183,14 +203,16 @@ export default function HomePage() {
               <div className="relative w-full max-w-md aspect-[4/5] border border-gold/30 p-3 bg-dark/70 backdrop-blur-md shadow-2xl group">
                 <div className="relative w-full h-full overflow-hidden">
                   <video
+                    ref={heroVideoRef}
                     autoPlay
                     loop
                     muted
                     playsInline
+                    preload="auto"
+                    poster="/images/hero-chocolate.png"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   >
                     <source src="/videos/hero-video.mp4" type="video/mp4" />
-                    <source src="/videos/1 (2).mp4" type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                   <div className="absolute inset-0 bg-gradient-to-t from-dark/40 via-transparent to-transparent pointer-events-none" />
