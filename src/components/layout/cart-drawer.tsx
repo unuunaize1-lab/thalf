@@ -121,16 +121,12 @@ export default function CartDrawer() {
                   <span className="text-dark font-medium font-mono">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Delivery</span>
-                  <span className="text-emerald-800 font-medium font-mono">
-                    {subtotal >= freeShippingThreshold ? 'FREE' : '₹150'}
-                  </span>
+                  <span>Shipping (Kerala)</span>
+                  <span className="text-dark font-medium font-mono">₹80</span>
                 </div>
-                <div className="flex justify-between text-sm font-semibold text-dark pt-2 border-t border-parchment">
-                  <span>Total (Incl. Taxes)</span>
-                  <span className="text-gold-dark font-mono text-base">
-                    ₹{(subtotal + (subtotal >= freeShippingThreshold ? 0 : 150)).toLocaleString('en-IN')}
-                  </span>
+                <div className="flex justify-between text-[11px] text-taupe/80 italic">
+                  <span>Shipping (Outside Kerala)</span>
+                  <span className="font-mono">₹100</span>
                 </div>
               </div>
               <div className="space-y-2 pt-2">

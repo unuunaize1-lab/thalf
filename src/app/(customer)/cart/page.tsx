@@ -14,9 +14,8 @@ export default function CartPage() {
   } = useCartStore();
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const freeShippingThreshold = 2500;
-  const deliveryFee = subtotal >= freeShippingThreshold ? 0 : 150;
-  const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+  const deliveryFeeKerala = 80;
+  const deliveryFeeOutsideKerala = 100;
 
   return (
     <main className="min-h-screen bg-cream text-dark py-12 px-4 sm:px-6 lg:px-8">
@@ -49,23 +48,11 @@ export default function CartPage() {
             {/* Cart Items List */}
             <div className="lg:col-span-7 space-y-4">
               
-              {/* Complimentary Courier Progress */}
-              <div className="bg-cream border border-parchment p-4 space-y-2 shadow-sm">
-                <div className="flex justify-between text-xs font-medium text-taupe">
-                  <span>
-                    {subtotal >= freeShippingThreshold ? (
-                      <span className="text-emerald-800 font-semibold">Free delivery unlocked</span>
-                    ) : (
-                      `Add ₹${(freeShippingThreshold - subtotal).toLocaleString('en-IN')} more for free delivery`
-                    )}
-                  </span>
-                </div>
-                <div className="w-full h-1.5 bg-parchment rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gold transition-all duration-500"
-                    style={{ width: `${progressPercent}%` }}
-                  />
-                </div>
+              {/* Delivery Rates Banner */}
+              <div className="bg-cream border border-parchment p-4 space-y-1 shadow-sm text-xs text-taupe">
+                <p className="font-semibold text-dark">Standard Shipping Charges:</p>
+                <p>• Inside Kerala: <strong className="text-dark">₹80</strong></p>
+                <p>• Outside Kerala: <strong className="text-dark">₹100</strong></p>
               </div>
 
               {/* Item Cards */}
@@ -151,16 +138,18 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex justify-between">
-                    <span>Delivery</span>
-                    <span className={deliveryFee === 0 ? 'text-emerald-800 font-semibold' : 'text-dark font-mono'}>
-                      {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}
-                    </span>
+                    <span>Delivery (Kerala)</span>
+                    <span className="text-dark font-mono font-semibold">₹80</span>
+                  </div>
+                  <div className="flex justify-between text-[11px] text-taupe/80 italic">
+                    <span>Delivery (Outside Kerala)</span>
+                    <span className="font-mono">₹100</span>
                   </div>
 
                   <div className="flex justify-between text-sm font-serif font-bold text-dark pt-3 border-t border-parchment">
-                    <span>Total Payable</span>
+                    <span>Subtotal (Excl. Shipping)</span>
                     <span className="text-gold-dark font-mono text-lg">
-                      ₹{(subtotal + deliveryFee).toLocaleString('en-IN')}
+                      ₹{subtotal.toLocaleString('en-IN')}
                     </span>
                   </div>
                 </div>

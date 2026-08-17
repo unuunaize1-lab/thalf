@@ -5,8 +5,22 @@ export const PRICING_CONFIG = {
   currencySymbol: '₹',
   locale: 'en-IN',
   timezone: 'Asia/Kolkata',
-  defaultShippingFee: 150,     // Shipping in INR
-  freeShippingThreshold: 1500, // Orders above ₹1500 get free shipping
+  defaultShippingFee: 80,       // Standard Kerala shipping fee in INR
+  keralaShippingFee: 80,        // Inside Kerala
+  outOfKeralaShippingFee: 100,  // Outside Kerala
+  freeShippingThreshold: 1500,  // Orders above ₹1500 get free shipping
+};
+
+/**
+ * Calculate shipping fee based on state location.
+ */
+export const calculateShippingFee = (state?: string): number => {
+  if (!state) return PRICING_CONFIG.keralaShippingFee;
+  const normalized = state.trim().toLowerCase();
+  if (normalized === 'kerala' || normalized.includes('kerala')) {
+    return PRICING_CONFIG.keralaShippingFee;
+  }
+  return PRICING_CONFIG.outOfKeralaShippingFee;
 };
 
 /**

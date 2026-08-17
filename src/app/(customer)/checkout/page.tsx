@@ -157,7 +157,7 @@ export default function CheckoutPage() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
-  const [state, setState] = useState('Maharashtra');
+  const [state, setState] = useState('Kerala');
   const [postalCode, setPostalCode] = useState('');
   const [deliveryNotes, setDeliveryNotes] = useState('');
 
@@ -203,7 +203,8 @@ export default function CheckoutPage() {
   }, []);
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = subtotal >= 2500 ? 0 : 150;
+  const isKerala = !state || state.trim().toLowerCase().includes('kerala');
+  const deliveryFee = isKerala ? 80 : 100;
   const totalAmount = subtotal + deliveryFee;
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -619,10 +620,8 @@ export default function CheckoutPage() {
                   <span className="text-dark font-mono font-semibold">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Delivery</span>
-                  <span className={deliveryFee === 0 ? 'text-emerald-800 font-semibold' : 'text-dark font-mono'}>
-                    {deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`}
-                  </span>
+                  <span>Delivery ({isKerala ? 'Kerala' : 'Outside Kerala'})</span>
+                  <span className="text-dark font-mono font-semibold">₹{deliveryFee}</span>
                 </div>
                 <div className="flex justify-between text-sm font-serif font-bold text-dark pt-3 border-t border-parchment">
                   <span>Total</span>

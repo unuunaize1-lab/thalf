@@ -49,8 +49,9 @@ export class OrderService {
     }
 
     // Server-side calculation rules:
-    // Shipping: Free for orders >= ₹2,500, else flat ₹150
-    const shippingAmount = subtotal >= 2500 ? 0 : 150;
+    // Shipping: ₹80 inside Kerala, ₹100 outside Kerala
+    const isKerala = !validated.state || validated.state.trim().toLowerCase().includes('kerala');
+    const shippingAmount = isKerala ? 80 : 100;
     
     // Gift Wrap: Feature not offered; amount is always 0
     const giftWrapAmount = 0;
