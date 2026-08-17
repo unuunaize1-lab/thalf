@@ -23,10 +23,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result, { status: 201 });
   } catch (error: any) {
     if (error instanceof ZodError) {
+      const messages = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ');
       return NextResponse.json(
         {
           success: false,
-          error: 'Validation failed',
+          error: `Validation failed: ${messages}`,
           details: error.issues.map((e) => ({ field: e.path.join('.'), message: e.message })),
         },
         { status: 400 }
