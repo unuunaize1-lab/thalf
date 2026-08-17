@@ -153,18 +153,36 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    [bgVideoRef, heroVideoRef].forEach((ref) => {
-      if (ref.current) {
-        ref.current.defaultMuted = true;
-        ref.current.muted = true;
-        const playPromise = ref.current.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((err) => {
-            console.warn('Autoplay prevented or delayed:', err);
-          });
+    const playVideos = () => {
+      [bgVideoRef, heroVideoRef].forEach((ref) => {
+        if (ref.current) {
+          ref.current.defaultMuted = true;
+          ref.current.muted = true;
+          const playPromise = ref.current.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+              console.warn('Autoplay prevented or delayed:', err);
+            });
+          }
         }
-      }
-    });
+      });
+    };
+
+    playVideos();
+
+    const handleInteraction = () => {
+      playVideos();
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('scroll', handleInteraction);
+    };
+
+    window.addEventListener('touchstart', handleInteraction, { passive: true });
+    window.addEventListener('scroll', handleInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('scroll', handleInteraction);
+    };
   }, []);
 
   const handleDirectAddToBag = (product: Product, e: React.MouseEvent) => {
@@ -248,8 +266,8 @@ export default function HomePage() {
     <div className="bg-cream text-dark">
       {/* HERO */}
       <section className="relative min-h-[88vh] bg-obsidian text-champagne flex items-center overflow-hidden border-b border-gold/20">
-        {/* Background ambient video layer (Desktop only >= 1024px) */}
-        <div className="hidden lg:block absolute inset-0 z-0 overflow-hidden opacity-20 pointer-events-none">
+        {/* Background ambient video layer */}
+        <div className="absolute inset-0 z-0 overflow-hidden opacity-20 pointer-events-none">
           <video
             ref={bgVideoRef}
             autoPlay
@@ -285,22 +303,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="lg:col-span-5 relative flex justify-center">
-              {/* Mobile/Tablet View (< 1024px): High Quality Chocolate Image Only */}
-              <div className="lg:hidden relative w-full max-w-md aspect-[4/5] border border-gold/30 p-3 bg-dark/70 backdrop-blur-md shadow-2xl">
-                <div className="relative w-full h-full overflow-hidden">
-                  <Image
-                    src="/images/choclates/rock-chocolate.jpeg"
-                    alt="THALF Artisanal Chocolate"
-                    fill
-                    priority
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark/50 via-transparent to-transparent pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Desktop View (>= 1024px): Hero Video */}
-              <div className="hidden lg:block relative w-full max-w-md aspect-[4/5] border border-gold/30 p-3 bg-dark/70 backdrop-blur-md shadow-2xl group">
+              {/* Hero Video (Mobile & Desktop) */}
+              <div className="relative w-full max-w-md aspect-[4/5] border border-gold/30 p-3 bg-dark/70 backdrop-blur-md shadow-2xl group">
                 <div className="relative w-full h-full overflow-hidden">
                   <video
                     ref={heroVideoRef}
