@@ -9,9 +9,97 @@ import { Product } from '@/types';
 import QuoteRequestModal from '@/components/hampers/QuoteRequestModal';
 import { FestivalSpecialsSection } from '@/components/shop/festival-specials-section';
 
+const DEFAULT_REAL_PRODUCTS: any[] = [
+  {
+    id: 'default-rock',
+    name: 'Rock Chocolate',
+    slug: 'rock-chocolate',
+    sku: 'THALF-ROCK-70',
+    price: 70,
+    weight: '4 pcs',
+    description: 'Crispy golden cornflakes tossed in velvety milk chocolate, handcrafted into delightful crunch rocks.',
+    shortDescription: 'Milk chocolate & crunchy cornflakes (4 pcs)',
+    ingredients: 'Milk chocolate, cornflakes',
+    tastingNotes: ['Milk Chocolate', 'Crispy Cornflakes', 'Crunchy Texture'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/rock-chocolate.jpeg', alt: 'Rock Chocolate' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-dates',
+    name: 'Dates Chocolate',
+    slug: 'dates-chocolate',
+    sku: 'THALF-DATE-100',
+    price: 100,
+    weight: '4 pcs',
+    description: 'Premium stuffed dates with roasted cashews & roasted almonds, enrobed in a rich blend of milk and dark chocolate.',
+    shortDescription: 'Milk & dark chocolate dates with roasted cashew & almond (4 pcs)',
+    ingredients: 'Milk chocolate, dark chocolate, dates, roasted cashew, roasted almond',
+    tastingNotes: ['Rich Date Sweetness', 'Roasted Cashew', 'Roasted Almond', 'Milk & Dark Blend'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/dates-chocolate.jpeg', alt: 'Dates Chocolate' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-lollypop',
+    name: 'Chocolate Lollypop',
+    slug: 'chocolate-lollypop',
+    sku: 'THALF-LOL-50',
+    price: 50,
+    weight: '3 pcs',
+    description: 'Handcrafted chocolate pops made with smooth milk chocolate and creamy white chocolate layers.',
+    shortDescription: 'Milk chocolate & white chocolate pops (3 pcs)',
+    ingredients: 'Milk chocolate, white chocolate',
+    tastingNotes: ['Creamy White Chocolate', 'Smooth Milk Chocolate', 'Playful & Sweet'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/lollypop.jpeg', alt: 'Chocolate Lollypop' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-kunafa',
+    name: 'Kunafa Chocolate',
+    slug: 'kunafa-chocolate',
+    sku: 'THALF-KUN-70',
+    price: 70,
+    weight: '25g (Mini bites)',
+    description: 'Crispy Middle-Eastern style kunafa pastry and pistachio butter wrapped in luscious milk chocolate. Shipping: ₹80 (Kerala) | ₹120 (Out of Kerala).',
+    shortDescription: 'Milk chocolate, pistachio, kunafa & butter (Mini bites 25g)',
+    ingredients: 'Milk chocolate, pistachio, kunafa, butter',
+    tastingNotes: ['Crispy Kunafa Pastry', 'Pistachio Butter', 'Milk Chocolate'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '2 Months',
+    images: [{ url: '/images/choclates/kunafa-pistachio.jpeg', alt: 'Kunafa Chocolate' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-caramel',
+    name: 'Caramel Nuts',
+    slug: 'caramel-nuts',
+    sku: 'THALF-CAR-80',
+    price: 80,
+    weight: '5 pcs',
+    description: 'Decadent milk chocolate bites filled with buttery caramel, roasted cashews, and roasted almonds. Shipping: ₹80 (Kerala) | ₹120 (Out of Kerala).',
+    shortDescription: 'Milk chocolate, roasted cashew, roasted almond & caramel (5 pcs)',
+    ingredients: 'Milk chocolate, roasted cashew, roasted almond, caramel',
+    tastingNotes: ['Golden Butter Caramel', 'Roasted Cashew', 'Roasted Almond', 'Milk Chocolate'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/caramel-chocolate.jpeg', alt: 'Caramel Nuts' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+];
+
 export default function ShopPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(DEFAULT_REAL_PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -32,21 +120,24 @@ export default function ShopPage() {
   };
 
   useEffect(() => {
+    let isMounted = true;
     async function loadShopProducts() {
       try {
-        setLoading(true);
-        const res = await fetch('/api/v1/products?limit=50');
-        const data = await res.json();
-        if (data.success && Array.isArray(data.products)) {
-          setProducts(data.products);
+        const res = await fetch('/api/v1/products?limit=50').catch(() => null);
+        if (res && res.ok) {
+          const data = await res.json();
+          if (isMounted && data.success && Array.isArray(data.products) && data.products.length > 0) {
+            setProducts(data.products);
+          }
         }
       } catch (err) {
-        setError('Unable to load products. Please refresh the page.');
-      } finally {
-        setLoading(false);
+        console.error('ShopPage load error:', err);
       }
     }
     loadShopProducts();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Derive real categories from actual loaded products
@@ -89,7 +180,7 @@ export default function ShopPage() {
         ? typeof product.images[0] === 'string'
           ? product.images[0]
           : product.images[0].url
-        : '/images/hero-chocolate.png';
+        : '/images/choclates/rock-chocolate.jpeg';
     addItem({ productId: product.id, productName: product.name, price: Number(product.price), quantity: 1, image: imageUrl, sku: product.sku });
     setAddedId(product.id);
     setTimeout(() => setAddedId(null), 1500);
@@ -127,7 +218,7 @@ export default function ShopPage() {
               )}
             </div>
 
-            {/* Only show category pills when there's more than one real category */}
+            {/* Category pills */}
             {categories.length > 2 && (
               <div className="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
                 {categories.map((cat) => (
@@ -205,31 +296,22 @@ export default function ShopPage() {
           <div className="py-16 text-center text-xs font-mono text-dark/50">Loading...</div>
         ) : filteredProducts.length === 0 ? (
           <div className="py-16 text-center border border-parchment/60 bg-cream/50 p-8 my-8">
-            <h3 className="font-editorial text-2xl text-dark mb-2">
-              {products.length === 0 ? 'Coming Soon' : 'No Chocolates Match Your Search'}
-            </h3>
-            <p className="text-xs text-taupe max-w-md mx-auto font-light leading-relaxed mb-4">
-              {products.length === 0
-                ? 'Our chocolates are being prepared. Please check back shortly.'
-                : 'Try adjusting your search or filters.'}
-            </p>
-            {products.length > 0 && (
-              <button
-                onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
-                className="px-6 py-2.5 bg-dark text-cream text-xs uppercase tracking-wider font-semibold hover:bg-gold hover:text-dark transition-colors"
-              >
-                Clear Filters
-              </button>
-            )}
+            <h3 className="font-editorial text-2xl text-dark mb-2">No Chocolates Match Your Search</h3>
+            <button
+              onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
+              className="px-6 py-2.5 bg-dark text-cream text-xs uppercase tracking-wider font-semibold hover:bg-gold hover:text-dark transition-colors"
+            >
+              Clear Filters
+            </button>
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => {
-              const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
+              const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
               const imageUrl =
                 Array.isArray(product.images) && product.images[0]
                   ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
-                  : '/images/hero-chocolate.png';
+                  : '/images/choclates/rock-chocolate.jpeg';
               const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
               const isOutOfStock = stockQty <= 0;
               return (
@@ -253,44 +335,22 @@ export default function ShopPage() {
                       <Link href={`/shop/${product.slug || product.id}`}>{product.name}</Link>
                     </h3>
                     <p className="text-xs text-taupe font-light line-clamp-2 leading-relaxed">{product.description}</p>
-                    {product.tastingNotes && product.tastingNotes.length > 0 && (
-                      <div className="pt-2 flex flex-wrap gap-1">
-                        {product.tastingNotes.map((note) => (
-                          <span key={note} className="text-[9px] text-taupe bg-champagne px-2 py-0.5 font-medium">✦ {note}</span>
-                        ))}
-                      </div>
+                    {product.weight && (
+                      <span className="inline-block text-[10px] font-mono font-semibold text-gold bg-champagne/80 px-2 py-0.5 rounded-sm">
+                        Pack: {product.weight}
+                      </span>
                     )}
                   </div>
                   <div className="mt-8 pt-4 border-t border-parchment/60 flex items-center justify-between">
-                    {product.pricingMode === 'QUOTE_REQUIRED' ? (
-                      <div className="flex flex-col">
-                        {product.startingPrice && Number(product.startingPrice) > 0 ? (
-                          <span className="text-xs font-mono font-bold text-gold">Starting from ₹{Number(product.startingPrice).toLocaleString('en-IN')}</span>
-                        ) : (
-                          <span className="text-xs font-editorial font-bold uppercase tracking-wider text-dark/70">Custom Quote</span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-lg font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
-                    )}
+                    <span className="text-lg font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
 
-                    {product.pricingMode === 'QUOTE_REQUIRED' ? (
-                      <button
-                        onClick={(e) => handleOpenQuoteModal(product, e)}
-                        className="px-4 py-2.5 bg-gold text-dark text-xs font-semibold uppercase tracking-wider hover:bg-gold-light transition-all flex items-center space-x-1.5 shadow-sm"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>Request Quote</span>
-                      </button>
-                    ) : (
-                      <button
-                        disabled={isOutOfStock}
-                        onClick={(e) => !isOutOfStock && handleQuickAdd(product, e)}
-                        className={`px-5 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 flex items-center space-x-1.5 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed border border-parchment' : addedId === product.id ? 'bg-emerald-800 text-white' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
-                      >
-                        {isOutOfStock ? <span>Out of Stock</span> : addedId === product.id ? (<><Check className="w-3.5 h-3.5" /><span>Added</span></>) : (<><ShoppingBag className="w-3.5 h-3.5" /><span>Add to Bag</span></>)}
-                      </button>
-                    )}
+                    <button
+                      disabled={isOutOfStock}
+                      onClick={(e) => !isOutOfStock && handleQuickAdd(product, e)}
+                      className={`px-5 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 flex items-center space-x-1.5 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed border border-parchment' : addedId === product.id ? 'bg-emerald-800 text-white' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
+                    >
+                      {isOutOfStock ? <span>Out of Stock</span> : addedId === product.id ? (<><Check className="w-3.5 h-3.5" /><span>Added</span></>) : (<><ShoppingBag className="w-3.5 h-3.5" /><span>Add to Bag</span></>)}
+                    </button>
                   </div>
                 </div>
               );
@@ -299,11 +359,11 @@ export default function ShopPage() {
         ) : (
           <div className="space-y-4">
             {filteredProducts.map((product) => {
-              const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
+              const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
               const imageUrl =
                 Array.isArray(product.images) && product.images[0]
                   ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
-                  : '/images/hero-chocolate.png';
+                  : '/images/choclates/rock-chocolate.jpeg';
               const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
               const isOutOfStock = stockQty <= 0;
               return (
@@ -322,36 +382,20 @@ export default function ShopPage() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between md:justify-end space-x-6 pt-4 md:pt-0 border-t md:border-t-0 border-parchment">
-                    {product.pricingMode === 'QUOTE_REQUIRED' ? (
-                      <span className="text-sm font-mono font-bold text-gold">
-                        {product.startingPrice && Number(product.startingPrice) > 0 ? `Starting ₹${Number(product.startingPrice).toLocaleString('en-IN')}` : 'Custom Quote'}
-                      </span>
-                    ) : (
-                      <span className="text-xl font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
-                    )}
+                    <span className="text-xl font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
 
                     <div className="flex space-x-2">
                       <button onClick={() => setQuickViewProduct(product)} className="p-2.5 border border-parchment hover:border-gold text-taupe hover:text-dark" aria-label={`Quick view ${product.name}`}>
                         <Eye className="w-4 h-4" />
                       </button>
 
-                      {product.pricingMode === 'QUOTE_REQUIRED' ? (
-                        <button
-                          onClick={(e) => handleOpenQuoteModal(product, e)}
-                          className="px-6 py-2.5 bg-gold text-dark text-xs uppercase tracking-ultra font-semibold hover:bg-gold-light transition-all flex items-center space-x-1"
-                        >
-                          <MessageSquare className="w-3.5 h-3.5 mr-1" />
-                          <span>Request Quote</span>
-                        </button>
-                      ) : (
-                        <button
-                          disabled={isOutOfStock}
-                          onClick={(e) => !isOutOfStock && handleQuickAdd(product, e)}
-                          className={`px-6 py-2.5 text-xs uppercase tracking-ultra font-semibold transition-all duration-300 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
-                        >
-                          {isOutOfStock ? 'Out of Stock' : 'Add to Bag'}
-                        </button>
-                      )}
+                      <button
+                        disabled={isOutOfStock}
+                        onClick={(e) => !isOutOfStock && handleQuickAdd(product, e)}
+                        className={`px-6 py-2.5 text-xs uppercase tracking-ultra font-semibold transition-all duration-300 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
+                      >
+                        {isOutOfStock ? 'Out of Stock' : 'Add to Bag'}
+                      </button>
                     </div>
                   </div>
                 </div>

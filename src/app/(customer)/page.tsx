@@ -11,9 +11,97 @@ import { FestivalSpecialsSection } from '@/components/shop/festival-specials-sec
 import { ClientPhotoGallerySection } from '@/components/shop/client-photo-gallery-section';
 import { CustomerReviewsSection } from '@/components/shop/customer-reviews-section';
 
+const DEFAULT_REAL_PRODUCTS: any[] = [
+  {
+    id: 'default-rock',
+    name: 'Rock Chocolate',
+    slug: 'rock-chocolate',
+    sku: 'THALF-ROCK-70',
+    price: 70,
+    weight: '4 pcs',
+    description: 'Crispy golden cornflakes tossed in velvety milk chocolate, handcrafted into delightful crunch rocks.',
+    shortDescription: 'Milk chocolate & crunchy cornflakes (4 pcs)',
+    ingredients: 'Milk chocolate, cornflakes',
+    tastingNotes: ['Milk Chocolate', 'Crispy Cornflakes', 'Crunchy Texture'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/rock-chocolate.jpeg', alt: 'Rock Chocolate' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-dates',
+    name: 'Dates Chocolate',
+    slug: 'dates-chocolate',
+    sku: 'THALF-DATE-100',
+    price: 100,
+    weight: '4 pcs',
+    description: 'Premium stuffed dates with roasted cashews & roasted almonds, enrobed in a rich blend of milk and dark chocolate.',
+    shortDescription: 'Milk & dark chocolate dates with roasted cashew & almond (4 pcs)',
+    ingredients: 'Milk chocolate, dark chocolate, dates, roasted cashew, roasted almond',
+    tastingNotes: ['Rich Date Sweetness', 'Roasted Cashew', 'Roasted Almond', 'Milk & Dark Blend'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/dates-chocolate.jpeg', alt: 'Dates Chocolate' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-lollypop',
+    name: 'Chocolate Lollypop',
+    slug: 'chocolate-lollypop',
+    sku: 'THALF-LOL-50',
+    price: 50,
+    weight: '3 pcs',
+    description: 'Handcrafted chocolate pops made with smooth milk chocolate and creamy white chocolate layers.',
+    shortDescription: 'Milk chocolate & white chocolate pops (3 pcs)',
+    ingredients: 'Milk chocolate, white chocolate',
+    tastingNotes: ['Creamy White Chocolate', 'Smooth Milk Chocolate', 'Playful & Sweet'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/lollypop.jpeg', alt: 'Chocolate Lollypop' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-kunafa',
+    name: 'Kunafa Chocolate',
+    slug: 'kunafa-chocolate',
+    sku: 'THALF-KUN-70',
+    price: 70,
+    weight: '25g (Mini bites)',
+    description: 'Crispy Middle-Eastern style kunafa pastry and pistachio butter wrapped in luscious milk chocolate. Shipping: ₹80 (Kerala) | ₹120 (Out of Kerala).',
+    shortDescription: 'Milk chocolate, pistachio, kunafa & butter (Mini bites 25g)',
+    ingredients: 'Milk chocolate, pistachio, kunafa, butter',
+    tastingNotes: ['Crispy Kunafa Pastry', 'Pistachio Butter', 'Milk Chocolate'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '2 Months',
+    images: [{ url: '/images/choclates/kunafa-pistachio.jpeg', alt: 'Kunafa Chocolate' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+  {
+    id: 'default-caramel',
+    name: 'Caramel Nuts',
+    slug: 'caramel-nuts',
+    sku: 'THALF-CAR-80',
+    price: 80,
+    weight: '5 pcs',
+    description: 'Decadent milk chocolate bites filled with buttery caramel, roasted cashews, and roasted almonds. Shipping: ₹80 (Kerala) | ₹120 (Out of Kerala).',
+    shortDescription: 'Milk chocolate, roasted cashew, roasted almond & caramel (5 pcs)',
+    ingredients: 'Milk chocolate, roasted cashew, roasted almond, caramel',
+    tastingNotes: ['Golden Butter Caramel', 'Roasted Cashew', 'Roasted Almond', 'Milk Chocolate'],
+    storageInstructions: 'Store in a cool, dry place away from direct sunlight (18°C - 22°C).',
+    shelfLife: '3 Months',
+    images: [{ url: '/images/choclates/caramel-chocolate.jpeg', alt: 'Caramel Nuts' }],
+    status: 'ACTIVE',
+    featured: true,
+  },
+];
+
 export default function HomePage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(DEFAULT_REAL_PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [addingState, setAddingState] = useState<Record<string, 'idle' | 'adding' | 'success'>>({});
 
@@ -29,22 +117,24 @@ export default function HomePage() {
   const { setQuickViewProduct, addItem, openCart } = useCartStore();
 
   useEffect(() => {
+    let isMounted = true;
     async function loadData() {
       try {
-        setLoading(true);
         const [prodRes, mktRes] = await Promise.all([
-          fetch('/api/v1/products?limit=20'),
+          fetch('/api/v1/products?limit=20').catch(() => null),
           fetch('/api/v1/settings/marketing').catch(() => null),
         ]);
         
-        const data = await prodRes.json();
-        if (data.success && Array.isArray(data.products)) {
-          setProducts(data.products);
+        if (prodRes && prodRes.ok) {
+          const data = await prodRes.json();
+          if (isMounted && data.success && Array.isArray(data.products) && data.products.length > 0) {
+            setProducts(data.products);
+          }
         }
 
-        if (mktRes) {
+        if (mktRes && mktRes.ok) {
           const mktData = await mktRes.json();
-          if (mktData.success && mktData.marketing) {
+          if (isMounted && mktData.success && mktData.marketing) {
             setHeroConfig({
               title: mktData.marketing.heroTitle || 'Chocolate, crafted differently.',
               subtitle: mktData.marketing.heroSubtitle || 'A contemporary expression of chocolate, created for moments worth remembering. Thoughtfully presented, balanced in sweetness, and made to share.',
@@ -53,12 +143,13 @@ export default function HomePage() {
           }
         }
       } catch (err) {
-        setError('Unable to load products. Please refresh the page.');
-      } finally {
-        setLoading(false);
+        console.error('HomePage loadData error:', err);
       }
     }
     loadData();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -86,7 +177,7 @@ export default function HomePage() {
         ? typeof product.images[0] === 'string'
           ? product.images[0]
           : product.images[0].url
-        : '/images/hero-chocolate.png';
+        : '/images/choclates/rock-chocolate.jpeg';
     addItem({ productId: product.id, productName: product.name, price: Number(product.price), quantity: 1, image: imageUrl, sku: product.sku });
     setTimeout(() => {
       setAddingState((prev) => ({ ...prev, [product.id]: 'success' }));
@@ -99,11 +190,11 @@ export default function HomePage() {
   const featuredSpotlightProduct = products.find((p) => (p as any).isFeatured) || (products.length > 0 ? products[0] : null);
 
   const renderProductCard = (product: Product, aspectClass = 'aspect-[4/3]') => {
-    const categoryName = typeof product.category === 'object' ? product.category?.name : product.category;
+    const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
     const imageUrl =
       Array.isArray(product.images) && product.images[0]
         ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
-        : '/images/hero-chocolate.png';
+        : '/images/choclates/rock-chocolate.jpeg';
     const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
     const isOutOfStock = stockQty <= 0;
     const currentState = addingState[product.id] || 'idle';
@@ -129,6 +220,11 @@ export default function HomePage() {
               <Link href={`/shop/${product.slug || product.id}`}>{product.name}</Link>
             </h3>
             <p className="text-xs text-taupe font-light line-clamp-2 leading-relaxed">{product.description}</p>
+            {product.weight && (
+              <span className="inline-block text-[10px] font-mono font-semibold text-gold bg-champagne/80 px-2 py-0.5 rounded-sm">
+                Pack: {product.weight}
+              </span>
+            )}
           </div>
         </div>
         <div className="mt-8 pt-4 border-t border-parchment flex items-center justify-between">
@@ -148,18 +244,6 @@ export default function HomePage() {
     );
   };
 
-  const renderComingSoonCard = () => (
-    <div className="group relative bg-white border border-parchment/60 border-dashed p-6 flex flex-col items-center justify-center text-center min-h-[320px]">
-      <div className="space-y-3">
-        <div className="w-10 h-10 rounded-full border border-parchment flex items-center justify-center mx-auto">
-          <ShoppingBag className="w-4 h-4 text-taupe/50" />
-        </div>
-        <p className="font-editorial text-xl text-dark/40 font-light">More Chocolates Coming Soon</p>
-        <p className="text-xs text-taupe/60 font-light">New creations are on the way.</p>
-      </div>
-    </div>
-  );
-
   return (
     <div className="bg-cream text-dark">
       {/* HERO */}
@@ -173,7 +257,7 @@ export default function HomePage() {
             muted
             playsInline
             preload="auto"
-            poster="/images/hero-chocolate.png"
+            poster="/images/choclates/rock-chocolate.jpeg"
             className="w-full h-full object-cover filter blur-[4px] scale-105"
           >
             <source src="/videos/hero-video.mp4" type="video/mp4" />
@@ -210,7 +294,7 @@ export default function HomePage() {
                     muted
                     playsInline
                     preload="auto"
-                    poster="/images/hero-chocolate.png"
+                    poster="/images/choclates/rock-chocolate.jpeg"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   >
                     <source src="/videos/hero-video.mp4" type="video/mp4" />
@@ -231,39 +315,22 @@ export default function HomePage() {
           <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark">The THALF Collection</h2>
           <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed">A collection made for moments of indulgence and sharing.</p>
         </div>
-        {error ? (
-          <div className="py-16 text-center border border-red-200 bg-red-50 p-8 my-8 max-w-2xl mx-auto">
-            <h3 className="font-editorial text-2xl text-red-900 mb-2">Something went wrong</h3>
-            <p className="text-xs text-red-800 max-w-md mx-auto font-light leading-relaxed">{error}</p>
-          </div>
-        ) : loading ? (
-          <div className="py-16 text-center text-xs font-mono text-taupe">Loading...</div>
-        ) : products.length === 0 ? (
-          <div className="py-16 text-center border border-parchment/60 bg-white/50 p-8 my-8">
-            <h3 className="font-editorial text-2xl text-dark mb-2">Coming Soon</h3>
-            <p className="text-xs text-taupe max-w-md mx-auto font-light leading-relaxed">Our chocolates are being prepared. Please check back shortly.</p>
-          </div>
-        ) : (
-          <div>
-            {products.length <= 3 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                {products.map((p) => renderProductCard(p, 'aspect-[4/3]'))}
-                {renderComingSoonCard()}
-              </div>
-            ) : products.length === 4 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                {products.map((p) => renderProductCard(p, 'aspect-[4/3]'))}
-              </div>
-            ) : products.length === 5 ? (
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">{products.slice(0, 3).map((p) => renderProductCard(p, 'aspect-[4/3]'))}</div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">{products.slice(3, 5).map((p) => renderProductCard(p, 'aspect-[16/10]'))}</div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">{products.map((p) => renderProductCard(p, 'aspect-[4/3]'))}</div>
-            )}
-          </div>
-        )}
+
+        <div>
+          {products.length <= 3 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {products.map((p) => renderProductCard(p, 'aspect-[4/3]'))}
+            </div>
+          ) : products.length === 5 ? (
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">{products.slice(0, 3).map((p) => renderProductCard(p, 'aspect-[4/3]'))}</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">{products.slice(3, 5).map((p) => renderProductCard(p, 'aspect-[16/10]'))}</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">{products.map((p) => renderProductCard(p, 'aspect-[4/3]'))}</div>
+          )}
+        </div>
+
         {products.length > 0 && (
           <div className="text-center mt-12">
             <Link href="/shop" className="inline-flex items-center space-x-2 px-8 py-4 border border-dark text-dark hover:bg-dark hover:text-cream text-xs font-semibold uppercase tracking-ultra transition-all duration-300">
@@ -281,7 +348,7 @@ export default function HomePage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               <div className="lg:col-span-6 relative aspect-square border border-parchment bg-white p-3 shadow-xl">
                 <Image
-                  src={Array.isArray(featuredSpotlightProduct.images) && featuredSpotlightProduct.images[0] ? (typeof featuredSpotlightProduct.images[0] === 'string' ? featuredSpotlightProduct.images[0] : featuredSpotlightProduct.images[0].url) : '/images/hero-chocolate.png'}
+                  src={Array.isArray(featuredSpotlightProduct.images) && featuredSpotlightProduct.images[0] ? (typeof featuredSpotlightProduct.images[0] === 'string' ? featuredSpotlightProduct.images[0] : featuredSpotlightProduct.images[0].url) : '/images/choclates/rock-chocolate.jpeg'}
                   alt={featuredSpotlightProduct.name}
                   fill
                   className="object-cover"
@@ -291,6 +358,11 @@ export default function HomePage() {
                 <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Featured</span>
                 <h2 className="font-editorial text-4xl sm:text-5xl font-light text-dark leading-tight">{featuredSpotlightProduct.name}</h2>
                 <p className="text-sm sm:text-base text-taupe font-light leading-relaxed">{featuredSpotlightProduct.description}</p>
+                {featuredSpotlightProduct.weight && (
+                  <span className="inline-block text-xs font-mono font-semibold text-gold bg-cream px-3 py-1 border border-gold/30">
+                    Pack Size: {featuredSpotlightProduct.weight}
+                  </span>
+                )}
                 <span className="text-2xl font-editorial font-bold text-dark block">₹{Number(featuredSpotlightProduct.price).toLocaleString('en-IN')}</span>
                 <div className="pt-4 flex items-center space-x-4">
                   <button onClick={(e) => handleDirectAddToBag(featuredSpotlightProduct, e)} className="px-8 py-4 bg-dark text-cream hover:bg-gold hover:text-dark text-xs uppercase tracking-ultra font-semibold transition-all duration-300 flex items-center space-x-2 shadow-lux">
