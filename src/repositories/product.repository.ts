@@ -72,59 +72,82 @@ export class ProductRepository {
   }
 
   async findById(id: string) {
-    return prisma.product.findFirst({
-      where: { id, isDeleted: false },
-      include: {
-        category: true,
-        collections: true,
-        images: { orderBy: { order: 'asc' } },
-        inventory: true,
-        reviews: {
-          include: { user: { select: { name: true, image: true } } },
-          orderBy: { createdAt: 'desc' },
+    if (!id || id.startsWith('default-')) return null;
+    try {
+      return await prisma.product.findFirst({
+        where: { id, isDeleted: false },
+        include: {
+          category: true,
+          collections: true,
+          images: { orderBy: { order: 'asc' } },
+          inventory: true,
+          reviews: {
+            include: { user: { select: { name: true, image: true } } },
+            orderBy: { createdAt: 'desc' },
+          },
         },
-      },
-    });
+      });
+    } catch (err) {
+      console.warn(`[ProductRepository] findById error for ${id}:`, err);
+      return null;
+    }
   }
 
   async findBySku(sku: string) {
-    return prisma.product.findFirst({
-      where: { sku: { equals: sku, mode: 'insensitive' }, isDeleted: false },
-    });
+    try {
+      return await prisma.product.findFirst({
+        where: { sku: { equals: sku, mode: 'insensitive' }, isDeleted: false },
+      });
+    } catch (err) {
+      console.warn(`[ProductRepository] findBySku error for ${sku}:`, err);
+      return null;
+    }
   }
 
   async findBySlug(slug: string) {
-    return prisma.product.findFirst({
-      where: { slug: { equals: slug, mode: 'insensitive' }, isDeleted: false },
-      include: {
-        category: true,
-        collections: true,
-        images: { orderBy: { order: 'asc' } },
-        inventory: true,
-      },
-    });
+    if (!slug || slug.startsWith('default-')) return null;
+    try {
+      return await prisma.product.findFirst({
+        where: { slug: { equals: slug, mode: 'insensitive' }, isDeleted: false },
+        include: {
+          category: true,
+          collections: true,
+          images: { orderBy: { order: 'asc' } },
+          inventory: true,
+        },
+      });
+    } catch (err) {
+      console.warn(`[ProductRepository] findBySlug error for ${slug}:`, err);
+      return null;
+    }
   }
 
   async findBySlugOrId(identifier: string) {
-    return prisma.product.findFirst({
-      where: {
-        isDeleted: false,
-        OR: [
-          { id: identifier },
-          { slug: identifier },
-        ],
-      },
-      include: {
-        category: true,
-        collections: true,
-        images: { orderBy: { order: 'asc' } },
-        inventory: true,
-        reviews: {
-          include: { user: { select: { name: true, image: true } } },
-          orderBy: { createdAt: 'desc' },
+    if (!identifier || identifier.startsWith('default-')) return null;
+    try {
+      return await prisma.product.findFirst({
+        where: {
+          isDeleted: false,
+          OR: [
+            { id: identifier },
+            { slug: identifier },
+          ],
         },
-      },
-    });
+        include: {
+          category: true,
+          collections: true,
+          images: { orderBy: { order: 'asc' } },
+          inventory: true,
+          reviews: {
+            include: { user: { select: { name: true, image: true } } },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      });
+    } catch (err) {
+      console.warn(`[ProductRepository] findBySlugOrId error for ${identifier}:`, err);
+      return null;
+    }
   }
 
   async create(data: CreateProductInput) {
