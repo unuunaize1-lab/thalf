@@ -24,12 +24,13 @@ export const metadata: Metadata = {
   description: 'Handcrafted luxury chocolates made with pure cocoa and premium ingredients.',
   icons: {
     icon: [
-      { url: '/favicon.png', type: 'image/png' },
-      { url: '/icon.png', type: 'image/png' },
+      { url: '/favicon.png?v=3', type: 'image/png' },
+      { url: '/icon.png?v=3', type: 'image/png' },
+      { url: '/favicon.ico?v=3' },
     ],
-    shortcut: ['/favicon.png'],
+    shortcut: ['/favicon.png?v=3'],
     apple: [
-      { url: '/favicon.png' },
+      { url: '/apple-icon.png?v=3' },
     ],
   },
 };
@@ -45,10 +46,11 @@ export default function RootLayout({
       className={`${cormorant.variable} ${manrope.variable} h-full antialiased selection:bg-[#C5A059] selection:text-white`}
     >
       <head>
-        <link rel="icon" href="/favicon.png" type="image/png" sizes="any" />
-        <link rel="icon" href="/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/favicon.png" />
-        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="icon" href="/favicon.png?v=3" type="image/png" sizes="any" />
+        <link rel="icon" href="/icon.png?v=3" type="image/png" />
+        <link rel="icon" href="/favicon.ico?v=3" />
+        <link rel="apple-touch-icon" href="/apple-icon.png?v=3" />
+        <link rel="shortcut icon" href="/favicon.png?v=3" />
       </head>
       <body className="min-h-full flex flex-col bg-[#FAF7F2] text-[#1F1610] font-sans">
         <QueryProvider>
