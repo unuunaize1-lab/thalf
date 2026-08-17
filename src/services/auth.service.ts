@@ -63,7 +63,7 @@ export class AuthService {
   }
 
   /**
-   * Auto-ensures Master Admin User exists if requested phone is the master admin phone.
+   * Auto-ensures Master Admin User exists and has correct password in database.
    */
   private async ensureMasterAdmin(requestedPhone: string) {
     try {
@@ -79,20 +79,24 @@ export class AuthService {
         });
       }
 
-      const existingUser = await prisma.user.findUnique({ where: { phone: requestedPhone } });
-      if (!existingUser) {
-        const adminPassword = process.env.MASTER_ADMIN_PASSWORD || 'ThalfDev2026!';
-        const hashedPassword = hashPassword(adminPassword);
-        await prisma.user.create({
-          data: {
-            phone: requestedPhone,
-            email: 'admin@thalf.store',
-            name: 'THALF Master Administrator',
-            passwordHash: hashedPassword,
-            roleId: superAdminRole.id,
-          },
-        });
-      }
+      const adminPassword = process.env.MASTER_ADMIN_PASSWORD || 'ThalfDev2026!';
+      const hashedPassword = hashPassword(adminPassword);
+
+      await prisma.user.upsert({
+        where: { phone: requestedPhone },
+        update: {
+          passwordHash: hashedPassword,
+          roleId: superAdminRole.id,
+          isDeleted: false,
+        },
+        create: {
+          phone: requestedPhone,
+          email: 'admin@thalf.store',
+          name: 'THALF Master Administrator',
+          passwordHash: hashedPassword,
+          roleId: superAdminRole.id,
+        },
+      });
     } catch (err) {
       console.error('Master admin auto-provisioning error:', err);
     }
