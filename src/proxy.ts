@@ -9,7 +9,7 @@ import type { NextRequest } from 'next/server';
 // requireRole(), and requirePermission() server-side.
 // ---------------------------------------------------------------------------
 
-const AUTH_PAGES = ['/login', '/register', '/forgot-password', '/admin-login'];
+const AUTH_PAGES = ['/login', '/register', '/forgot-password'];
 const PROTECTED_CUSTOMER_PAGES = ['/profile'];
 const PROTECTED_ADMIN_PAGES = ['/admin'];
 
@@ -57,11 +57,8 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const sessionToken = request.cookies.get('thalf_session')?.value;
 
-  // Always allow /admin-login on all domains
+  // Always allow /admin-login on all domains without auto-redirecting (client page validates admin role)
   if (pathname === '/admin-login') {
-    if (sessionToken) {
-      return NextResponse.redirect(new URL('/admin/orders', request.url));
-    }
     return NextResponse.next();
   }
 
@@ -139,7 +136,10 @@ export function proxy(request: NextRequest) {
   // -----------------------------------------------------------------------
   const isAuthPageRoute = AUTH_PAGES.some(route => pathname.startsWith(route));
   if (isAuthPageRoute && sessionToken) {
-    return NextResponse.redirect(new URL('/admin/orders', request.url));
+    if (isAdminSubdomain(host)) {
+      return NextResponse.redirect(new URL('/admin/orders', request.url));
+    }
+    return NextResponse.redirect(new URL('/profile', request.url));
   }
 
   return NextResponse.next();
