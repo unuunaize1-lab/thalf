@@ -63,6 +63,42 @@ export class AuthService {
   }
 
   /**
+   * Auto-ensures Master Admin User exists if requested phone is the master admin phone.
+   */
+  private async ensureMasterAdmin(requestedPhone: string) {
+    try {
+      const defaultMasterPhone = normalizePhoneNumber(process.env.MASTER_ADMIN_PHONE || '9876500000');
+      if (requestedPhone !== defaultMasterPhone) return;
+
+      let superAdminRole = await prisma.role.findUnique({ where: { name: RoleType.SUPER_ADMIN } }) 
+        || await prisma.role.findUnique({ where: { name: RoleType.ADMIN } });
+
+      if (!superAdminRole) {
+        superAdminRole = await prisma.role.create({
+          data: { name: RoleType.SUPER_ADMIN, permissions: ['*'] },
+        });
+      }
+
+      const existingUser = await prisma.user.findUnique({ where: { phone: requestedPhone } });
+      if (!existingUser) {
+        const adminPassword = process.env.MASTER_ADMIN_PASSWORD || 'ThalfDev2026!';
+        const hashedPassword = hashPassword(adminPassword);
+        await prisma.user.create({
+          data: {
+            phone: requestedPhone,
+            email: 'admin@thalf.store',
+            name: 'THALF Master Administrator',
+            passwordHash: hashedPassword,
+            roleId: superAdminRole.id,
+          },
+        });
+      }
+    } catch (err) {
+      console.error('Master admin auto-provisioning error:', err);
+    }
+  }
+
+  /**
    * Login with Mobile Number and Password
    */
   async loginUser(data: { phone: string; password: string }) {
@@ -71,6 +107,9 @@ export class AuthService {
     }
 
     const normalizedPhone = normalizePhoneNumber(data.phone);
+
+    // Auto-seed master admin if needed for production/deployment environment
+    await this.ensureMasterAdmin(normalizedPhone);
 
     const user = await prisma.user.findUnique({
       where: { phone: normalizedPhone },

@@ -86,7 +86,37 @@ async function main() {
       create: { key: setting.key, value: setting.value, description: setting.description },
     });
   }
-  console.log('✅ System Settings seeded');
+  // 3. Mandatory Master Admin Account
+  const superAdminRole = await prisma.role.findUnique({ where: { name: RoleType.SUPER_ADMIN } });
+  if (superAdminRole) {
+    const adminPhone = '+919876500000';
+    const adminPassword = process.env.MASTER_ADMIN_PASSWORD || 'ThalfDev2026!';
+    const adminEmail = process.env.MASTER_ADMIN_EMAIL || 'admin@thalf.store';
+    
+    // We import hashPassword dynamically or compute PBKDF2 hash
+    const crypto = await import('node:crypto');
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(adminPassword, salt, 100000, 64, 'sha256').toString('hex');
+    const hashedPassword = `$pbkdf2$sha256$v=1$i=100000$${salt}$${hash}`;
+
+    await prisma.user.upsert({
+      where: { phone: adminPhone },
+      update: {
+        passwordHash: hashedPassword,
+        roleId: superAdminRole.id,
+        isDeleted: false,
+      },
+      create: {
+        email: adminEmail,
+        name: 'THALF Master Administrator',
+        phone: adminPhone,
+        passwordHash: hashedPassword,
+        roleId: superAdminRole.id,
+      },
+    });
+    console.log(`✅ Master Admin Account ensured (${adminPhone})`);
+  }
+
   console.log('🔒 Production Seed Completed.');
 }
 
