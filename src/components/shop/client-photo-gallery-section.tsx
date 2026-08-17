@@ -64,7 +64,7 @@ const DEFAULT_GALLERY_IMAGES: GalleryImageItem[] = [
 ];
 
 export function ClientPhotoGallerySection() {
-  const [images, setImages] = useState<GalleryImageItem[]>([]);
+  const [images, setImages] = useState<GalleryImageItem[]>(DEFAULT_GALLERY_IMAGES);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
