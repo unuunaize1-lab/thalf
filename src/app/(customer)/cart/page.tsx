@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Trash2, ArrowRight, MapPin } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 
 export default function CartPage() {
@@ -13,9 +13,11 @@ export default function CartPage() {
     updateQuantity,
   } = useCartStore();
 
+  const [destination, setDestination] = useState<'kerala' | 'outside'>('kerala');
+
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFeeKerala = 80;
-  const deliveryFeeOutsideKerala = 100;
+  const deliveryFee = destination === 'kerala' ? 80 : 100;
+  const totalAmount = subtotal + deliveryFee;
 
   return (
     <main className="min-h-screen bg-cream text-dark py-12 px-4 sm:px-6 lg:px-8">
@@ -49,10 +51,21 @@ export default function CartPage() {
             <div className="lg:col-span-7 space-y-4">
               
               {/* Delivery Rates Banner */}
-              <div className="bg-cream border border-parchment p-4 space-y-1 shadow-sm text-xs text-taupe">
-                <p className="font-semibold text-dark">Standard Shipping Charges:</p>
-                <p>• Inside Kerala: <strong className="text-dark">₹80</strong></p>
-                <p>• Outside Kerala: <strong className="text-dark">₹100</strong></p>
+              <div className="bg-cream border border-parchment p-4 space-y-2 shadow-sm text-xs text-taupe">
+                <div className="flex items-center space-x-2 text-dark font-semibold">
+                  <MapPin className="w-4 h-4 text-gold" />
+                  <span>Delivery Charges Notice</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-1 text-xs">
+                  <div className="bg-white p-2.5 border border-parchment flex justify-between items-center">
+                    <span>Inside Kerala</span>
+                    <strong className="text-dark font-mono">₹80</strong>
+                  </div>
+                  <div className="bg-white p-2.5 border border-parchment flex justify-between items-center">
+                    <span>Outside Kerala</span>
+                    <strong className="text-dark font-mono">₹100</strong>
+                  </div>
+                </div>
               </div>
 
               {/* Item Cards */}
@@ -131,6 +144,35 @@ export default function CartPage() {
                   Order Summary
                 </h2>
 
+                {/* Delivery Location Selector */}
+                <div className="space-y-2 bg-white/60 border border-parchment p-3">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-taupe">Select Shipping Location</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDestination('kerala')}
+                      className={`py-2 px-3 text-xs font-semibold transition-all ${
+                        destination === 'kerala'
+                          ? 'bg-dark text-gold border border-dark'
+                          : 'bg-cream text-taupe border border-parchment hover:text-dark'
+                      }`}
+                    >
+                      Kerala (₹80)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDestination('outside')}
+                      className={`py-2 px-3 text-xs font-semibold transition-all ${
+                        destination === 'outside'
+                          ? 'bg-dark text-gold border border-dark'
+                          : 'bg-cream text-taupe border border-parchment hover:text-dark'
+                      }`}
+                    >
+                      Outside Kerala (₹100)
+                    </button>
+                  </div>
+                </div>
+
                 <div className="space-y-3 text-xs text-taupe">
                   <div className="flex justify-between">
                     <span>Items Subtotal</span>
@@ -138,18 +180,14 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex justify-between">
-                    <span>Delivery (Kerala)</span>
-                    <span className="text-dark font-mono font-semibold">₹80</span>
-                  </div>
-                  <div className="flex justify-between text-[11px] text-taupe/80 italic">
-                    <span>Delivery (Outside Kerala)</span>
-                    <span className="font-mono">₹100</span>
+                    <span>Delivery Charge ({destination === 'kerala' ? 'Kerala' : 'Outside Kerala'})</span>
+                    <span className="text-dark font-mono font-semibold">₹{deliveryFee}</span>
                   </div>
 
                   <div className="flex justify-between text-sm font-serif font-bold text-dark pt-3 border-t border-parchment">
-                    <span>Subtotal (Excl. Shipping)</span>
-                    <span className="text-gold-dark font-mono text-lg">
-                      ₹{subtotal.toLocaleString('en-IN')}
+                    <span>Total Payable</span>
+                    <span className="text-gold-dark font-mono text-xl font-bold">
+                      ₹{totalAmount.toLocaleString('en-IN')}
                     </span>
                   </div>
                 </div>

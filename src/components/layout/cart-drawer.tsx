@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
@@ -15,9 +15,11 @@ export default function CartDrawer() {
     updateQuantity,
   } = useCartStore();
 
+  const [destination, setDestination] = useState<'kerala' | 'outside'>('kerala');
+
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const freeShippingThreshold = 2500;
-  const progressPercent = Math.min(100, (subtotal / freeShippingThreshold) * 100);
+  const deliveryFee = destination === 'kerala' ? 80 : 100;
+  const totalAmount = subtotal + deliveryFee;
 
   if (!isCartOpen) return null;
 
@@ -45,20 +47,6 @@ export default function CartDrawer() {
               <button onClick={closeCart} className="p-2 text-taupe hover:text-dark hover:rotate-90 transition-all duration-300" aria-label="Close bag">
                 <X className="w-5 h-5 stroke-[1.5]" />
               </button>
-            </div>
-
-            {/* Free Shipping Progress */}
-            <div className="mt-4 pt-3 border-t border-parchment/40">
-              <div className="text-xs font-medium text-taupe mb-1.5">
-                {subtotal >= freeShippingThreshold ? (
-                  <span className="text-emerald-800 font-semibold">Free delivery unlocked</span>
-                ) : (
-                  `Add ₹${(freeShippingThreshold - subtotal).toLocaleString('en-IN')} more for free delivery`
-                )}
-              </div>
-              <div className="w-full h-1 bg-parchment rounded-full overflow-hidden">
-                <div className="h-full bg-gold transition-all duration-500" style={{ width: `${progressPercent}%` }} />
-              </div>
             </div>
           </div>
 
@@ -115,18 +103,48 @@ export default function CartDrawer() {
           {/* Checkout Footer */}
           {items.length > 0 && (
             <div className="p-6 border-t border-parchment bg-cream/90 backdrop-blur-md space-y-4">
+              
+              {/* Shipping Destination Toggle */}
+              <div className="space-y-1 bg-white/60 border border-parchment p-2.5">
+                <span className="text-[10px] uppercase font-bold text-taupe tracking-wider block">Shipping Location</span>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    onClick={() => setDestination('kerala')}
+                    className={`py-1 px-2 text-[11px] font-medium transition-all ${
+                      destination === 'kerala'
+                        ? 'bg-dark text-gold font-bold border border-dark'
+                        : 'bg-cream text-taupe border border-parchment hover:text-dark'
+                    }`}
+                  >
+                    Kerala (₹80)
+                  </button>
+                  <button
+                    onClick={() => setDestination('outside')}
+                    className={`py-1 px-2 text-[11px] font-medium transition-all ${
+                      destination === 'outside'
+                        ? 'bg-dark text-gold font-bold border border-dark'
+                        : 'bg-cream text-taupe border border-parchment hover:text-dark'
+                    }`}
+                  >
+                    Outside Kerala (₹100)
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-1.5 text-xs text-taupe">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="text-dark font-medium font-mono">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Shipping (Kerala)</span>
-                  <span className="text-dark font-medium font-mono">₹80</span>
+                  <span>Delivery Charge</span>
+                  <span className="text-dark font-medium font-mono">₹{deliveryFee}</span>
                 </div>
-                <div className="flex justify-between text-[11px] text-taupe/80 italic">
-                  <span>Shipping (Outside Kerala)</span>
-                  <span className="font-mono">₹100</span>
+                <div className="flex justify-between text-sm font-semibold text-dark pt-2 border-t border-parchment">
+                  <span>Total Amount</span>
+                  <span className="text-gold-dark font-mono text-base font-bold">
+                    ₹{totalAmount.toLocaleString('en-IN')}
+                  </span>
                 </div>
               </div>
               <div className="space-y-2 pt-2">
