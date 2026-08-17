@@ -12,6 +12,57 @@ interface GalleryImageItem {
   sortOrder: number;
 }
 
+const DEFAULT_GALLERY_IMAGES: GalleryImageItem[] = [
+  {
+    id: 'default-gal-1',
+    imageUrl: '/images/gallery/gallery-1.jpg',
+    alt: 'THALF Artisanal Moment',
+    caption: 'Handcrafted luxury chocolate hamper',
+    row: 1,
+    sortOrder: 1,
+  },
+  {
+    id: 'default-gal-2',
+    imageUrl: '/images/gallery/gallery-2.jpg',
+    alt: 'THALF Celebration Box',
+    caption: 'Specially curated festive collection',
+    row: 1,
+    sortOrder: 2,
+  },
+  {
+    id: 'default-gal-3',
+    imageUrl: '/images/gallery/gallery-3.jpg',
+    alt: 'THALF Signature Gift Box',
+    caption: 'Bespoke corporate & personal gifting',
+    row: 2,
+    sortOrder: 3,
+  },
+  {
+    id: 'default-gal-4',
+    imageUrl: '/images/hero-chocolate.png',
+    alt: 'THALF Master Creation',
+    caption: 'Balanced sweetness & rich cacao',
+    row: 2,
+    sortOrder: 4,
+  },
+  {
+    id: 'default-gal-5',
+    imageUrl: '/images/behind-the-scenes-atelier.png',
+    alt: 'THALF Atelier Crafting',
+    caption: 'Behind the scenes at our chocolate atelier',
+    row: 1,
+    sortOrder: 5,
+  },
+  {
+    id: 'default-gal-6',
+    imageUrl: '/images/cacao-harvest.png',
+    alt: 'Single Origin Cacao Reserve',
+    caption: 'Ethically sourced single-origin cocoa beans',
+    row: 2,
+    sortOrder: 6,
+  },
+];
+
 export function ClientPhotoGallerySection() {
   const [images, setImages] = useState<GalleryImageItem[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -22,11 +73,14 @@ export function ClientPhotoGallerySection() {
       try {
         const res = await fetch('/api/v1/gallery');
         const data = await res.json();
-        if (isMounted && data.success && Array.isArray(data.images)) {
+        if (isMounted && data.success && Array.isArray(data.images) && data.images.length > 0) {
           setImages(data.images);
+        } else if (isMounted) {
+          setImages(DEFAULT_GALLERY_IMAGES);
         }
       } catch (err) {
         console.error('[GallerySection] Failed to load gallery images:', err);
+        if (isMounted) setImages(DEFAULT_GALLERY_IMAGES);
       } finally {
         if (isMounted) setLoaded(true);
       }
@@ -37,19 +91,16 @@ export function ClientPhotoGallerySection() {
     };
   }, []);
 
-  // Gracefully hide section if DB has no active gallery images uploaded
-  if (loaded && images.length === 0) {
-    return null;
-  }
+  const displayImages = images.length > 0 ? images : DEFAULT_GALLERY_IMAGES;
 
-  const row1Images = images.filter((img) => img.row === 1);
-  const row2Images = images.filter((img) => img.row === 2);
+  const row1Images = displayImages.filter((img) => img.row === 1);
+  const row2Images = displayImages.filter((img) => img.row === 2);
 
   // Fallback to splitting images evenly if only row 1 has images
-  const finalRow1 = row1Images.length > 0 ? row1Images : images.slice(0, Math.ceil(images.length / 2));
-  const finalRow2 = row2Images.length > 0 ? row2Images : images.slice(Math.ceil(images.length / 2));
+  const finalRow1 = row1Images.length > 0 ? row1Images : displayImages.slice(0, Math.ceil(displayImages.length / 2));
+  const finalRow2 = row2Images.length > 0 ? row2Images : displayImages.slice(Math.ceil(displayImages.length / 2));
 
-  // Triple sequences to ensure zero visual gaps across wide 4K viewports during continuous marquee animation
+  // Quadruple sequences to ensure zero visual gaps across wide 4K viewports during continuous marquee animation
   const row1Sequence = [...finalRow1, ...finalRow1, ...finalRow1, ...finalRow1];
   const row2Sequence = [...finalRow2, ...finalRow2, ...finalRow2, ...finalRow2];
 
@@ -120,7 +171,7 @@ export function ClientPhotoGallerySection() {
         </p>
       </div>
 
-      {/* Marquee Track Container — Page-level overflow protected */}
+      {/* Marquee Track Container */}
       <div className="w-full overflow-hidden space-y-6 relative z-10">
         {/* ROW 1: Continuous Leftward Marquee */}
         {finalRow1.length > 0 && (
