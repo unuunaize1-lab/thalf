@@ -47,7 +47,7 @@ export default function AdminLoginPage() {
         throw new Error('Access denied: Account does not have administrative privileges.');
       }
 
-      router.push('/admin/orders');
+      window.location.href = '/admin/orders';
     } catch (err: any) {
       setError(err.message || 'Invalid admin credentials.');
     } finally {

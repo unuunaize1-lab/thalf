@@ -53,16 +53,9 @@ export async function POST(req: NextRequest) {
 
     return response;
   } catch (error: any) {
-    if (process.env.NODE_ENV !== 'production' && (error?.message?.includes('database server') || error?.name?.includes('PrismaClient'))) {
-      return NextResponse.json(
-        { success: false, error: 'Database connection failed: Local PostgreSQL server is offline at 127.0.0.1:5432.' },
-        { status: 503 }
-      );
-    }
-
-    // Return exact generic message for all authentication failures in production
+    console.error('API /v1/auth/login Error:', error);
     return NextResponse.json(
-      { success: false, error: 'Mobile number or password is incorrect.' },
+      { success: false, error: error?.message || 'Mobile number or password is incorrect.' },
       { status: 401 }
     );
   }

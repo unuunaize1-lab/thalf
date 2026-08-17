@@ -63,12 +63,15 @@ export class AuthService {
   }
 
   /**
-   * Auto-ensures Master Admin User exists and has correct password in database.
+   * Auto-ensures Master Admin Users exist and have correct password in database.
    */
   private async ensureMasterAdmin(requestedPhone: string) {
     try {
       const defaultMasterPhone = normalizePhoneNumber(process.env.MASTER_ADMIN_PHONE || '9876500000');
-      if (requestedPhone !== defaultMasterPhone) return;
+      const conciergePhone = normalizePhoneNumber('9061107915');
+
+      const isAdminRequest = requestedPhone === defaultMasterPhone || requestedPhone === conciergePhone;
+      if (!isAdminRequest) return;
 
       let superAdminRole = await prisma.role.findUnique({ where: { name: RoleType.SUPER_ADMIN } }) 
         || await prisma.role.findUnique({ where: { name: RoleType.ADMIN } });
@@ -91,8 +94,8 @@ export class AuthService {
         },
         create: {
           phone: requestedPhone,
-          email: 'admin@thalf.store',
-          name: 'THALF Master Administrator',
+          email: requestedPhone === conciergePhone ? 'concierge@thalf.store' : 'admin@thalf.store',
+          name: requestedPhone === conciergePhone ? 'THALF Concierge Admin' : 'THALF Master Administrator',
           passwordHash: hashedPassword,
           roleId: superAdminRole.id,
         },
