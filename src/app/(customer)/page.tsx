@@ -267,16 +267,16 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(197,160,89,0.18),_transparent_65%)] pointer-events-none" />
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7 space-y-8 animate-fade-up">
-              <h1 className="font-editorial text-4xl sm:text-6xl lg:text-7xl font-light text-cream leading-[1.08] tracking-tight whitespace-pre-line">
-                {heroConfig.title}
+            <div className="lg:col-span-7 space-y-6 sm:space-y-8">
+              <h1 className="font-editorial text-3xl sm:text-6xl lg:text-7xl font-light text-cream leading-[1.08] tracking-tight whitespace-pre-line">
+                {heroConfig.title || 'Chocolate, crafted differently.'}
               </h1>
               <p className="text-sm sm:text-base text-taupe font-light max-w-xl leading-relaxed">
-                {heroConfig.subtitle}
+                {heroConfig.subtitle || 'A contemporary expression of chocolate, created for moments worth remembering. Thoughtfully presented, balanced in sweetness, and made to share.'}
               </p>
               <div className="pt-2 flex flex-wrap gap-4 items-center">
                 <Link href="#collection" className="px-8 py-4 bg-gold text-dark hover:bg-gold-light text-xs font-semibold uppercase tracking-ultra transition-all duration-300 shadow-lux flex items-center space-x-2.5">
-                  <span>{heroConfig.buttonText}</span>
+                  <span>{heroConfig.buttonText || 'Shop Chocolates'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link href="/about/our-craft" className="px-8 py-4 border border-gold/40 text-champagne hover:border-gold hover:text-gold text-xs font-semibold uppercase tracking-ultra transition-all duration-300 backdrop-blur-sm">
