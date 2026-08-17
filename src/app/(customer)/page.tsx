@@ -9,6 +9,7 @@ import { Product } from '@/types';
 
 import { FestivalSpecialsSection } from '@/components/shop/festival-specials-section';
 import { ClientPhotoGallerySection } from '@/components/shop/client-photo-gallery-section';
+import { CustomerReviewsSection } from '@/components/shop/customer-reviews-section';
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -328,6 +329,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* REAL CUSTOMER REVIEWS SHOWCASE */}
+      <CustomerReviewsSection />
 
       {/* REAL THALF CLIENT PHOTO GALLERY */}
       <ClientPhotoGallerySection />
