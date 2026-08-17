@@ -46,45 +46,77 @@ const REVIEWS: ReviewItem[] = [
 export function CustomerReviewsSection() {
   const [activeReview, setActiveReview] = useState<ReviewItem | null>(null);
 
+  // Repeat reviews 4 times to ensure seamless infinite looping with no visual gaps
+  const marqueeSequence = [...REVIEWS, ...REVIEWS, ...REVIEWS, ...REVIEWS];
+
   return (
     <section className="py-24 bg-champagne/40 border-b border-parchment relative overflow-hidden">
+      {/* CSS Animation Keyframes for Continuous Infinite Marquee */}
+      <style jsx global>{`
+        @keyframes marqueeReviewsLeft {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        .animate-marquee-reviews {
+          display: flex;
+          width: max-content;
+          animation: marqueeReviewsLeft 35s linear infinite;
+          will-change: transform;
+        }
+
+        .animate-marquee-reviews:hover {
+          animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-marquee-reviews {
+            animation-duration: 90s;
+            animation-play-state: paused;
+          }
+        }
+      `}</style>
+
       {/* Ambient background decoration */}
       <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 bg-white border border-gold/30 rounded-full shadow-sm mb-2">
-            <MessageSquareHeart className="w-3.5 h-3.5 text-gold" />
-            <span className="text-[10px] font-bold uppercase tracking-ultra text-gold">
-              Patron Testimonials
-            </span>
-          </div>
-
-          <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark leading-tight">
-            Kind Words <span className="poetic-italic font-normal text-gold">&</span> Real Reviews
-          </h2>
-
-          <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed max-w-xl mx-auto">
-            Authentic experiences and feedback shared directly by clients who have enjoyed THALF artisanal creations.
-          </p>
-
-          <div className="flex justify-center items-center space-x-1 pt-2">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 text-gold fill-gold" />
-            ))}
-            <span className="text-xs font-mono text-taupe ml-2 font-semibold">5.0 / 5.0 Rating</span>
-          </div>
+      {/* Section Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 mb-16 relative z-10">
+        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-white border border-gold/30 rounded-full shadow-sm mb-2">
+          <MessageSquareHeart className="w-4 h-4 text-gold" />
+          <span className="text-[10px] font-bold uppercase tracking-ultra text-gold">
+            Patron Testimonials
+          </span>
         </div>
 
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {REVIEWS.map((review) => (
+        <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark leading-tight">
+          Kind Words <span className="poetic-italic font-normal text-gold">&</span> Real Reviews
+        </h2>
+
+        <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed max-w-xl mx-auto">
+          Authentic feedback and client messages shared directly by THALF connoisseurs.
+        </p>
+
+        <div className="flex justify-center items-center space-x-1 pt-2">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="w-4 h-4 text-gold fill-gold" />
+          ))}
+          <span className="text-xs font-mono text-taupe ml-2 font-semibold">5.0 / 5.0 Rating</span>
+        </div>
+      </div>
+
+      {/* Continuous Marquee Track */}
+      <div className="w-full overflow-hidden select-none relative z-10">
+        <div className="animate-marquee-reviews space-x-6 pr-6">
+          {marqueeSequence.map((review, idx) => (
             <div
-              key={review.id}
+              key={`marquee-rev-${review.id}-${idx}`}
               onClick={() => setActiveReview(review)}
-              className="group relative bg-white border border-parchment p-3 shadow-lux hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between"
+              className="flex-shrink-0 w-64 sm:w-80 bg-white border border-parchment p-3 shadow-lux hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between group hover:border-gold"
             >
               {/* Image Container */}
               <div className="relative w-full aspect-[4/5] bg-dark/5 overflow-hidden border border-parchment/60">
@@ -92,7 +124,7 @@ export function CustomerReviewsSection() {
                   src={review.image}
                   alt={review.title}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  sizes="(max-width: 640px) 256px, 320px"
                   className="object-contain group-hover:scale-105 transition-transform duration-700 p-1"
                 />
                 
@@ -113,7 +145,7 @@ export function CustomerReviewsSection() {
                   <span className="text-[9px] font-bold uppercase tracking-ultra text-gold block">
                     {review.tag}
                   </span>
-                  <h3 className="font-editorial text-sm font-medium text-dark line-clamp-1 group-hover:text-gold transition-colors">
+                  <h3 className="font-editorial text-xs font-medium text-dark line-clamp-1 group-hover:text-gold transition-colors">
                     {review.title}
                   </h3>
                 </div>
@@ -126,7 +158,6 @@ export function CustomerReviewsSection() {
             </div>
           ))}
         </div>
-
       </div>
 
       {/* Lightbox Zoom Modal */}
