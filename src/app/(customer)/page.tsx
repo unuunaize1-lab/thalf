@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Eye, ShoppingBag, Check, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, Eye, ShoppingBag, Check, MessageCircle, ChevronLeft, ChevronRight, Gift } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { Product } from '@/types';
 
@@ -509,6 +509,98 @@ export default function HomePage() {
           </div>
         </section>
       )}
+
+      {/* SPECIAL HAMPERS & GIFTING SHOWCASE */}
+      <section className="py-24 bg-dark text-cream border-b border-gold/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gold/20 pb-8">
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Artisanal Gifting</span>
+              <h2 className="font-editorial text-3xl sm:text-5xl font-light text-cream">Special Hampers & Collections</h2>
+              <p className="text-xs sm:text-sm text-parchment/80 font-light max-w-xl leading-relaxed">
+                Curated gift hampers for Weddings, Corporate Bulk Gifting, Festivals & Birthday celebrations.
+              </p>
+            </div>
+            <Link
+              href="/hampers"
+              className="inline-flex items-center space-x-2 px-6 py-3.5 bg-gold text-dark hover:bg-gold-light text-xs font-semibold uppercase tracking-ultra transition-all duration-300 shadow-lg self-start md:self-auto"
+            >
+              <span>Explore All Hampers</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                title: 'Wedding Hampers',
+                subtitle: 'Marriage Favors & Return Gifts',
+                tag: 'Bespoke Flavors',
+                image: '/images/choclates/kunafa-chocolate.jpeg',
+                link: '/hampers',
+              },
+              {
+                title: 'Corporate Gifting',
+                subtitle: 'Custom Logo Branding & Ribbon',
+                tag: 'Bulk Pricing',
+                image: '/images/choclates/dates-chocolate.jpeg',
+                link: '/hampers',
+              },
+              {
+                title: 'Festival Hampers',
+                subtitle: 'Diwali, Eid & Festive Specials',
+                tag: 'Festive Box',
+                image: '/images/choclates/caramel-nuts.jpeg',
+                link: '/hampers',
+              },
+              {
+                title: 'Birthday Hampers',
+                subtitle: 'Personalized Chocolate Boxes',
+                tag: 'Custom Note',
+                image: '/images/choclates/rock-chocolate.jpeg',
+                link: '/hampers',
+              },
+            ].map((h, i) => (
+              <Link
+                key={i}
+                href={h.link}
+                className="group bg-cream/5 border border-gold/20 p-6 flex flex-col justify-between hover:border-gold hover:bg-cream/10 transition-all duration-500 shadow-xl"
+              >
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[9px] font-mono uppercase tracking-widest text-gold bg-gold/10 border border-gold/30 px-2.5 py-0.5">
+                      {h.tag}
+                    </span>
+                    <Gift className="w-4 h-4 text-gold group-hover:scale-110 transition-transform" />
+                  </div>
+
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-champagne/10 border border-gold/20 p-2">
+                    <Image
+                      src={h.image}
+                      alt={h.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      className="object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+
+                  <div>
+                    <h3 className="font-editorial text-2xl font-normal text-cream group-hover:text-gold transition-colors">
+                      {h.title}
+                    </h3>
+                    <p className="text-xs text-parchment/70 font-light mt-1">{h.subtitle}</p>
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-gold/20 flex items-center justify-between mt-6">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-gold">View Hampers</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-gold group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* FESTIVAL SPECIALS SECTION */}
       <FestivalSpecialsSection />
