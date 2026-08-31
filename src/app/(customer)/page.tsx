@@ -368,135 +368,160 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* FEATURED PRODUCT SLIDESHOW */}
+      {/* FEATURED PRODUCT HERO SLIDER (BIG IMAGE SLIDESHOW) */}
       {displayFeaturedProducts.length > 0 && (
-        <section className="py-24 bg-champagne/40 border-b border-parchment relative overflow-hidden">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Handcrafted Excellence</span>
-                <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark">Featured Creations</h2>
-                <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed max-w-lg">Explore our signature artisan creations in motion.</p>
+        <section className="py-20 bg-dark text-cream border-b border-gold/30 relative overflow-hidden">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
+            <div className="flex justify-between items-end border-b border-gold/20 pb-6">
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Featured Collection</span>
+                <h2 className="font-editorial text-3xl sm:text-5xl font-light text-cream">Signature Gallery</h2>
               </div>
-
-              {/* Controls */}
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setCurrentSlide((prev) => (prev === 0 ? displayFeaturedProducts.length - 1 : prev - 1))}
-                  className="p-3 border border-dark/30 hover:border-gold hover:bg-dark hover:text-gold text-dark transition-all duration-300 shadow-sm"
-                  aria-label="Previous Slide"
+                  className="p-3 border border-gold/40 text-cream hover:bg-gold hover:text-dark transition-all duration-300 backdrop-blur-md"
+                  aria-label="Previous Featured Product"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
-                <span className="text-xs font-mono font-semibold text-dark px-2">
+                <span className="text-xs font-mono font-semibold text-gold px-2">
                   {currentSlide + 1} / {displayFeaturedProducts.length}
                 </span>
                 <button
                   onClick={() => setCurrentSlide((prev) => (prev === displayFeaturedProducts.length - 1 ? 0 : prev + 1))}
-                  className="p-3 border border-dark/30 hover:border-gold hover:bg-dark hover:text-gold text-dark transition-all duration-300 shadow-sm"
-                  aria-label="Next Slide"
+                  className="p-3 border border-gold/40 text-cream hover:bg-gold hover:text-dark transition-all duration-300 backdrop-blur-md"
+                  aria-label="Next Featured Product"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
-            {/* Main Slideshow Container */}
-            <div className="relative overflow-hidden">
-              <div
-                className="flex transition-transform duration-700 ease-out"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-              >
-                {displayFeaturedProducts.map((product) => {
-                  const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
-                  const imageUrl =
-                    Array.isArray(product.images) && product.images[0]
-                      ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
-                      : '/images/choclates/rock-chocolate.jpeg';
-                  const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
-                  const isOutOfStock = stockQty <= 0;
-                  const currentState = addingState[product.id] || 'idle';
+            {/* Big Image Slider Stage */}
+            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[600px] border border-gold/30 bg-obsidian overflow-hidden group shadow-2xl">
+              {displayFeaturedProducts.map((product, idx) => {
+                const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
+                const imageUrl =
+                  Array.isArray(product.images) && product.images[0]
+                    ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
+                    : '/images/choclates/rock-chocolate.jpeg';
+                const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
+                const isOutOfStock = stockQty <= 0;
+                const currentState = addingState[product.id] || 'idle';
+                const isActive = idx === currentSlide;
 
-                  return (
-                    <div key={product.id} className="w-full flex-shrink-0 px-2 sm:px-4">
-                      <div className="bg-white border border-parchment p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xl">
-                        {/* Image Column */}
-                        <div className="lg:col-span-6 relative aspect-square sm:aspect-[4/3] bg-champagne/20 border border-parchment p-4 flex items-center justify-center overflow-hidden group">
-                          <Image
-                            src={imageUrl}
-                            alt={product.name}
-                            fill
-                            priority
-                            sizes="(max-width: 1024px) 100vw, 50vw"
-                            className={`object-contain group-hover:scale-105 transition-transform duration-700 ${isOutOfStock ? 'grayscale opacity-75' : ''}`}
-                          />
+                return (
+                  <div
+                    key={product.id}
+                    className={`absolute inset-0 transition-all duration-1000 ease-in-out flex flex-col justify-end ${
+                      isActive ? 'opacity-100 scale-100 z-10 pointer-events-auto' : 'opacity-0 scale-105 z-0 pointer-events-none'
+                    }`}
+                  >
+                    {/* Big Image Container */}
+                    <div className="absolute inset-0 bg-champagne/10 flex items-center justify-center p-6 sm:p-12">
+                      <Image
+                        src={imageUrl}
+                        alt={product.name}
+                        fill
+                        priority={isActive}
+                        sizes="100vw"
+                        className={`object-contain transition-transform duration-1000 ${isActive ? 'scale-100' : 'scale-110'} ${isOutOfStock ? 'grayscale opacity-60' : ''}`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-dark/95 via-dark/40 to-transparent pointer-events-none" />
+                    </div>
+
+                    {/* Content Overlay */}
+                    <div className="relative z-20 p-6 sm:p-10 lg:p-12 max-w-3xl space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <span className="text-[10px] font-bold uppercase tracking-ultra text-dark bg-gold px-3 py-1 font-mono">
+                          {categoryName}
+                        </span>
+                        {product.weight && (
+                          <span className="text-[10px] font-mono text-parchment border border-parchment/40 px-3 py-1">
+                            Pack: {product.weight}
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="font-editorial text-3xl sm:text-5xl lg:text-6xl font-light text-cream leading-tight">
+                        <Link href={`/shop/${product.slug || product.id}`} className="hover:text-gold transition-colors">
+                          {product.name}
+                        </Link>
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-parchment/80 font-light leading-relaxed line-clamp-2 max-w-xl">
+                        {product.description}
+                      </p>
+
+                      <div className="pt-2 flex items-center space-x-6">
+                        <span className="text-2xl sm:text-3xl font-editorial font-bold text-gold">
+                          ₹{Number(product.price).toLocaleString('en-IN')}
+                        </span>
+
+                        <div className="flex items-center space-x-3">
+                          <button
+                            disabled={isOutOfStock || currentState === 'adding'}
+                            onClick={(e) => !isOutOfStock && handleDirectAddToBag(product, e)}
+                            className={`px-6 sm:px-8 py-3.5 text-xs uppercase tracking-ultra font-semibold transition-all duration-300 flex items-center space-x-2 shadow-lux ${
+                              isOutOfStock
+                                ? 'bg-parchment/20 text-taupe cursor-not-allowed border border-parchment/40'
+                                : currentState === 'success'
+                                ? 'bg-emerald-800 text-white'
+                                : 'bg-gold text-dark hover:bg-gold-light'
+                            }`}
+                          >
+                            {isOutOfStock ? (
+                              <span>Out of Stock</span>
+                            ) : currentState === 'adding' ? (
+                              <span>Adding...</span>
+                            ) : currentState === 'success' ? (
+                              <><Check className="w-4 h-4 text-white" /><span>Added</span></>
+                            ) : (
+                              <><ShoppingBag className="w-4 h-4" /><span>Add to Bag</span></>
+                            )}
+                          </button>
+
                           <button
                             onClick={() => setQuickViewProduct(product)}
-                            className="absolute bottom-4 right-4 bg-cream/95 hover:bg-gold text-dark p-3 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100"
-                            aria-label={`Quick view ${product.name}`}
+                            className="p-3.5 border border-gold/40 text-gold hover:bg-gold hover:text-dark transition-all duration-300"
+                            aria-label="Quick view"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
                         </div>
-
-                        {/* Info Column */}
-                        <div className="lg:col-span-6 space-y-6">
-                          <div className="flex items-center space-x-3">
-                            <span className="text-[10px] font-bold uppercase tracking-ultra text-gold border border-gold/40 px-3 py-1 bg-cream">{categoryName}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-ultra bg-gold text-dark px-2.5 py-1 font-mono">★ Featured Creation</span>
-                          </div>
-
-                          <h3 className="font-editorial text-3xl sm:text-5xl font-light text-dark leading-tight">
-                            <Link href={`/shop/${product.slug || product.id}`} className="hover:text-gold transition-colors">{product.name}</Link>
-                          </h3>
-
-                          <p className="text-sm sm:text-base text-taupe font-light leading-relaxed">{product.description}</p>
-
-                          {product.weight && (
-                            <span className="inline-block text-xs font-mono font-semibold text-gold bg-cream px-3 py-1 border border-gold/30">
-                              Pack Size: {product.weight}
-                            </span>
-                          )}
-
-                          <div className="flex items-baseline space-x-3 pt-2">
-                            <span className="text-3xl font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
-                            {product.compareAtPrice && <span className="text-sm font-mono text-taupe line-through">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</span>}
-                          </div>
-
-                          <div className="pt-4 flex flex-wrap items-center gap-4">
-                            <button
-                              disabled={isOutOfStock || currentState === 'adding'}
-                              onClick={(e) => !isOutOfStock && handleDirectAddToBag(product, e)}
-                              className={`px-8 py-4 text-xs uppercase tracking-ultra font-semibold transition-all duration-300 flex items-center space-x-2 shadow-lux ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed border border-parchment' : currentState === 'success' ? 'bg-emerald-800 text-white' : currentState === 'adding' ? 'bg-gold/80 text-dark opacity-80' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
-                            >
-                              {isOutOfStock ? <span>Out of Stock</span> : currentState === 'adding' ? <span>Adding...</span> : currentState === 'success' ? (<><Check className="w-4 h-4 text-white" /><span>Added to Bag</span></>) : (<><ShoppingBag className="w-4 h-4" /><span>Add to Bag</span></>)}
-                            </button>
-
-                            <Link
-                              href={`/shop/${product.slug || product.id}`}
-                              className="px-6 py-4 border border-dark text-dark hover:bg-dark hover:text-cream text-xs uppercase tracking-ultra font-semibold transition-all duration-300"
-                            >
-                              View Product Details
-                            </Link>
-                          </div>
-                        </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Slide Pagination Dots */}
-            <div className="flex justify-center items-center space-x-2 pt-4">
-              {displayFeaturedProducts.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`h-2 transition-all duration-300 ${currentSlide === idx ? 'w-8 bg-gold' : 'w-2 bg-dark/20 hover:bg-dark/50'}`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
+            {/* Thumbnail Navigation Bar */}
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 pt-2">
+              {displayFeaturedProducts.map((p, idx) => {
+                const thumbUrl =
+                  Array.isArray(p.images) && p.images[0]
+                    ? typeof p.images[0] === 'string' ? p.images[0] : p.images[0].url
+                    : '/images/choclates/rock-chocolate.jpeg';
+                const isSelected = idx === currentSlide;
+
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`relative h-20 sm:h-24 border transition-all duration-300 overflow-hidden bg-cream/10 p-2 flex items-center justify-center ${
+                      isSelected ? 'border-gold ring-2 ring-gold/50 opacity-100 scale-[1.02]' : 'border-gold/20 opacity-50 hover:opacity-100'
+                    }`}
+                  >
+                    <Image src={thumbUrl} alt={p.name} fill className="object-contain p-1" />
+                    <div className="absolute inset-0 bg-dark/20" />
+                    <span className="absolute bottom-1 left-2 right-2 text-[9px] font-mono text-cream truncate text-left z-10">
+                      {p.name}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </section>
