@@ -142,12 +142,12 @@ export function FestivalSpecialsSection() {
                           )}
                         </div>
 
-                        <div className="relative w-full aspect-square bg-dark/40 overflow-hidden mb-6">
+                        <div className="relative w-full aspect-square bg-champagne/20 overflow-hidden mb-6 flex items-center justify-center p-2">
                           <Image
                             src={imageUrl}
                             alt={product.name}
                             fill
-                            className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`}
+                            className={`object-contain group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`}
                           />
 
                           <div className="absolute inset-0 bg-dark/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3 p-4">

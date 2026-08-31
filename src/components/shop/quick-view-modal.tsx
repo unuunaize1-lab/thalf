@@ -62,12 +62,12 @@ export default function QuickViewModal() {
 
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Image */}
-            <div className="relative min-h-[350px] md:min-h-[480px] bg-dark/5">
+            <div className="relative min-h-[350px] md:min-h-[480px] bg-champagne/20 flex items-center justify-center p-4">
               <Image
                 src={quickViewProduct.images[0]?.url || '/images/hero-chocolate.png'}
                 alt={quickViewProduct.name}
                 fill
-                className="object-cover"
+                className="object-contain p-2"
               />
               {hasRealOrigin && (
                 <div className="absolute bottom-4 left-4 right-4 bg-dark/80 backdrop-blur-md p-3 text-cream text-[11px] font-mono tracking-wider border border-gold/30 flex justify-between items-center">

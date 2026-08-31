@@ -137,13 +137,13 @@ export default function ProductDetailPage() {
           {/* Left Column: Media Gallery */}
           <div className="lg:col-span-7 space-y-4">
             {/* Primary Image View */}
-            <div className="relative aspect-[4/3] bg-dark/5 border border-parchment p-2 overflow-hidden group shadow-lux">
+            <div className="relative aspect-[4/3] bg-champagne/20 border border-parchment p-2 overflow-hidden group shadow-lux flex items-center justify-center">
               <Image
                 src={images[activeImageIndex]?.url || images[0]?.url || '/images/hero-chocolate.png'}
                 alt={images[activeImageIndex]?.alt || product.name}
                 fill
                 priority
-                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                className="object-contain group-hover:scale-105 transition-transform duration-700 ease-out p-1"
               />
               {hasDiscount && (
                 <span className="absolute top-4 left-4 bg-gold text-dark text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 shadow-sm">
@@ -163,7 +163,7 @@ export default function ProductDetailPage() {
                       activeImageIndex === idx ? 'border-gold ring-1 ring-gold p-0.5 shadow-md' : 'border-parchment opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <Image src={img.url} alt={img.alt || product.name} fill className="object-cover" />
+                    <Image src={img.url} alt={img.alt || product.name} fill className="object-contain p-1" />
                   </button>
                 ))}
               </div>
