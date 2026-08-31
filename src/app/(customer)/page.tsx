@@ -220,8 +220,6 @@ export default function HomePage() {
   };
 
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-  const featuredProducts = products.filter((p) => (p as any).featured || (p as any).isFeatured);
-  const displayFeaturedProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 3);
 
   const renderProductCard = (product: Product, aspectClass = 'aspect-[4/3]') => {
     const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
