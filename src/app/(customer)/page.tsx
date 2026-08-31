@@ -161,7 +161,7 @@ export default function HomePage() {
     if (displayFeaturedProducts.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev === displayFeaturedProducts.length - 1 ? 0 : prev + 1));
-    }, 4000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [displayFeaturedProducts.length]);
 
@@ -380,7 +380,7 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* FEATURED PRODUCT HERO SLIDER (BIG IMAGE SLIDESHOW) */}
+      {/* FEATURED PRODUCT HERO SLIDER (STRICT AUTOMATIC SLIDESHOW - 5s) */}
       {displayFeaturedProducts.length > 0 && (
         <section className="py-20 bg-dark text-cream border-b border-gold/30 relative overflow-hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
@@ -389,29 +389,15 @@ export default function HomePage() {
                 <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Featured Collection</span>
                 <h2 className="font-editorial text-3xl sm:text-5xl font-light text-cream">Signature Gallery</h2>
               </div>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => setCurrentSlide((prev) => (prev === 0 ? displayFeaturedProducts.length - 1 : prev - 1))}
-                  className="p-3 border border-gold/40 text-cream hover:bg-gold hover:text-dark transition-all duration-300 backdrop-blur-md"
-                  aria-label="Previous Featured Product"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <span className="text-xs font-mono font-semibold text-gold px-2">
-                  {currentSlide + 1} / {displayFeaturedProducts.length}
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-gold bg-gold/10 border border-gold/30 px-3 py-1">
+                  Auto Showcase • 5s
                 </span>
-                <button
-                  onClick={() => setCurrentSlide((prev) => (prev === displayFeaturedProducts.length - 1 ? 0 : prev + 1))}
-                  className="p-3 border border-gold/40 text-cream hover:bg-gold hover:text-dark transition-all duration-300 backdrop-blur-md"
-                  aria-label="Next Featured Product"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
               </div>
             </div>
 
             {/* Big Image Slider Stage */}
-            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[600px] border border-gold/30 bg-obsidian overflow-hidden group shadow-2xl">
+            <div className="relative w-full h-[450px] sm:h-[550px] lg:h-[600px] border border-gold/30 bg-obsidian overflow-hidden shadow-2xl">
               {displayFeaturedProducts.map((product, idx) => {
                 const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
                 const imageUrl =
@@ -509,7 +495,7 @@ export default function HomePage() {
               })}
             </div>
 
-            {/* Thumbnail Navigation Bar */}
+            {/* Automatic Slide Progress Indicators */}
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 pt-2">
               {displayFeaturedProducts.map((p, idx) => {
                 const thumbUrl =
@@ -519,11 +505,10 @@ export default function HomePage() {
                 const isSelected = idx === currentSlide;
 
                 return (
-                  <button
+                  <div
                     key={p.id}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`relative h-20 sm:h-24 border transition-all duration-300 overflow-hidden bg-cream/10 p-2 flex items-center justify-center ${
-                      isSelected ? 'border-gold ring-2 ring-gold/50 opacity-100 scale-[1.02]' : 'border-gold/20 opacity-50 hover:opacity-100'
+                    className={`relative h-20 sm:h-24 border transition-all duration-500 overflow-hidden bg-cream/10 p-2 flex items-center justify-center ${
+                      isSelected ? 'border-gold ring-2 ring-gold/50 opacity-100 scale-[1.02]' : 'border-gold/20 opacity-40'
                     }`}
                   >
                     <Image src={thumbUrl} alt={p.name} fill className="object-contain p-1" />
@@ -531,7 +516,7 @@ export default function HomePage() {
                     <span className="absolute bottom-1 left-2 right-2 text-[9px] font-mono text-cream truncate text-left z-10">
                       {p.name}
                     </span>
-                  </button>
+                  </div>
                 );
               })}
             </div>
