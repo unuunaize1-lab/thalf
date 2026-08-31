@@ -57,13 +57,13 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const sessionToken = request.cookies.get('thalf_session')?.value;
 
-  // Always allow /admin-login on all domains without auto-redirecting (client page validates admin role)
-  // /admin/login is kept as a legacy redirect → /admin-login
-  if (pathname === '/admin-login') {
+  // Secret admin login route
+  if (pathname === '/secret-admin') {
     return NextResponse.next();
   }
-  if (pathname === '/admin/login') {
-    return NextResponse.redirect(new URL('/admin-login', request.url), 308);
+  // Block legacy /admin-login or /admin/login routes
+  if (pathname === '/admin-login' || pathname === '/admin/login') {
+    return NextResponse.rewrite(new URL('/404', request.url));
   }
 
   // -----------------------------------------------------------------------
@@ -96,12 +96,12 @@ export function proxy(request: NextRequest) {
   }
 
   // -----------------------------------------------------------------------
-  // 3. Customer domain (production): Block /admin/* pages (except /admin-login)
+  // 3. Customer domain (production): Block /admin/* pages (except /secret-admin)
   // -----------------------------------------------------------------------
   if (!isAdminSubdomain(host) && isProductionHost(host)) {
-    if (pathname.startsWith('/admin') && pathname !== '/admin-login') {
+    if (pathname.startsWith('/admin') && pathname !== '/secret-admin') {
       if (!sessionToken) {
-        const loginUrl = new URL('/admin-login', request.url);
+        const loginUrl = new URL('/secret-admin', request.url);
         loginUrl.searchParams.set('redirect', pathname);
         return NextResponse.redirect(loginUrl);
       }
@@ -129,7 +129,7 @@ export function proxy(request: NextRequest) {
   );
 
   if (isProtectedAdminRoute && !sessionToken) {
-    const loginUrl = new URL('/admin-login', request.url);
+    const loginUrl = new URL('/secret-admin', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
@@ -152,6 +152,7 @@ export const config = {
   matcher: [
     '/profile/:path*',
     '/admin/:path*',
+    '/secret-admin',
     '/admin-login',
     '/login',
     '/register',
