@@ -41,7 +41,48 @@ export default function CustomerHampersPage() {
     loadHampers();
   }, []);
 
-  const filteredHampers = hampers.filter((h) => {
+  const DEFAULT_STATIC_HAMPERS = [
+    {
+      id: 'static-wedding-1',
+      name: 'Royal Heritage Wedding Hamper',
+      hamperType: 'Wedding Hampers',
+      pricingMode: 'QUOTE_REQUIRED',
+      startingPrice: 2499,
+      images: ['/images/hampers/wedding-hamper.png'],
+      description: 'Handcrafted luxury chocolate favor box featuring gold-leaf truffles, custom wedding crest ribbon, and artisanal cocoa bars. Perfect for grand wedding return gifts.',
+    },
+    {
+      id: 'static-corporate-1',
+      name: 'Executive Corporate Elite Box',
+      hamperType: 'Corporate / Bulk Hampers',
+      pricingMode: 'QUOTE_REQUIRED',
+      startingPrice: 1999,
+      images: ['/images/hampers/corporate-hamper.png'],
+      description: 'Sophisticated executive chocolate box with custom corporate logo sleeve, premium single-origin truffles, and personalized thank-you note card for clients & staff.',
+    },
+    {
+      id: 'static-festival-1',
+      name: 'Grand Celebration Festive Box',
+      hamperType: 'Festival Specials',
+      pricingMode: 'FIXED_PRICE',
+      price: 1899,
+      images: ['/images/hampers/festival-hamper.png'],
+      description: 'Festive artisanal chocolate collection packed with roasted caramel nut rocks, dates chocolates, and gold-foil wrapped delight bars for Diwali, Eid & Christmas.',
+    },
+    {
+      id: 'static-birthday-1',
+      name: 'Signature Birthday Deluxe Hamper',
+      hamperType: 'Birthday Hampers',
+      pricingMode: 'FIXED_PRICE',
+      price: 1499,
+      images: ['/images/hampers/birthday-hamper.png'],
+      description: 'A rich assortment of Kunafa chocolates, crunch rock chocolates, and personalized birthday greeting sleeve. Wrapped in elegant silk ribbon.',
+    },
+  ];
+
+  const displayHampers = hampers.length > 0 ? hampers : DEFAULT_STATIC_HAMPERS;
+
+  const filteredHampers = displayHampers.filter((h) => {
     if (activeCategory === 'ALL') return true;
     if (activeCategory === 'Festival Specials') return h.hamperType?.includes('Festival') || h.hamperType?.includes('Custom');
     return h.hamperType === activeCategory;
