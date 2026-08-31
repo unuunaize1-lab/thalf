@@ -227,13 +227,13 @@ export default function HomePage() {
               <span className="text-[9px] font-bold uppercase tracking-ultra bg-red-950 text-red-200 border border-red-800 px-2 py-0.5">Out of Stock</span>
             )}
           </div>
-          <div className={`relative w-full ${aspectClass} bg-dark/5 overflow-hidden mb-6`}>
+          <div className={`relative w-full ${aspectClass} bg-champagne/20 overflow-hidden mb-6 flex items-center justify-center p-2`}>
             <Image 
               src={imageUrl} 
               alt={product.name} 
               fill 
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`} 
+              className={`object-contain group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`} 
             />
             <button onClick={() => setQuickViewProduct(product)} className="absolute bottom-3 right-3 bg-cream/95 hover:bg-gold text-dark p-2.5 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100" aria-label={`Quick view ${product.name}`}>
               <Eye className="w-4 h-4" />

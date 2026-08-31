@@ -324,8 +324,8 @@ export default function ShopPage() {
                       <span className="text-[9px] font-bold uppercase tracking-ultra bg-red-950 text-red-200 border border-red-800 px-2 py-0.5">Out of Stock</span>
                     )}
                   </div>
-                  <div className="relative w-full aspect-[4/3] bg-dark/5 overflow-hidden mb-6">
-                    <Image src={imageUrl} alt={product.name} fill className={`object-cover group-hover:scale-105 transition-transform duration-500 ease-out ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
+                  <div className="relative w-full aspect-[4/3] bg-champagne/20 overflow-hidden mb-6 flex items-center justify-center p-2">
+                    <Image src={imageUrl} alt={product.name} fill className={`object-contain group-hover:scale-105 transition-transform duration-500 ease-out ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
                     <button onClick={() => setQuickViewProduct(product)} className="absolute bottom-3 right-3 bg-cream/95 hover:bg-gold text-dark p-2.5 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100" aria-label={`Quick view ${product.name}`}>
                       <Eye className="w-4 h-4" />
                     </button>
@@ -369,8 +369,8 @@ export default function ShopPage() {
               return (
                 <div key={product.id} className="bg-white/70 border border-parchment p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm hover:border-gold/50 transition-colors">
                   <div className="flex items-center space-x-6">
-                    <div className="relative w-28 h-28 bg-dark/5 flex-shrink-0 overflow-hidden">
-                      <Image src={imageUrl} alt={product.name} fill className={`object-cover ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
+                    <div className="relative w-28 h-28 bg-champagne/20 flex-shrink-0 overflow-hidden flex items-center justify-center p-1">
+                      <Image src={imageUrl} alt={product.name} fill className={`object-contain ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
                     </div>
                     <div className="space-y-1">
                       {categoryName && <span className="text-[9px] font-bold uppercase tracking-ultra text-gold">{categoryName}</span>}
