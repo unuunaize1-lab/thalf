@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Eye, ShoppingBag, Check, MessageCircle } from 'lucide-react';
+import { ArrowRight, Eye, ShoppingBag, Check, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { Product } from '@/types';
 
@@ -104,6 +104,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [addingState, setAddingState] = useState<Record<string, 'idle' | 'adding' | 'success'>>({});
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const bgVideoRef = useRef<HTMLVideoElement>(null);
   const heroVideoRef = useRef<HTMLVideoElement>(null);
@@ -367,74 +368,135 @@ export default function HomePage() {
         )}
       </section>
 
-      {/* FEATURED CREATIONS SHOWCASE (MULTI-PRODUCT) */}
+      {/* FEATURED PRODUCT SLIDESHOW */}
       {displayFeaturedProducts.length > 0 && (
-        <section className="py-24 bg-champagne/40 border-b border-parchment">
+        <section className="py-24 bg-champagne/40 border-b border-parchment relative overflow-hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Handcrafted Excellence</span>
-              <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark">Featured Creations</h2>
-              <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed">Our signature artisan selections, curated for special moments.</p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Handcrafted Excellence</span>
+                <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark">Featured Creations</h2>
+                <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed max-w-lg">Explore our signature artisan creations in motion.</p>
+              </div>
+
+              {/* Controls */}
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => setCurrentSlide((prev) => (prev === 0 ? displayFeaturedProducts.length - 1 : prev - 1))}
+                  className="p-3 border border-dark/30 hover:border-gold hover:bg-dark hover:text-gold text-dark transition-all duration-300 shadow-sm"
+                  aria-label="Previous Slide"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <span className="text-xs font-mono font-semibold text-dark px-2">
+                  {currentSlide + 1} / {displayFeaturedProducts.length}
+                </span>
+                <button
+                  onClick={() => setCurrentSlide((prev) => (prev === displayFeaturedProducts.length - 1 ? 0 : prev + 1))}
+                  className="p-3 border border-dark/30 hover:border-gold hover:bg-dark hover:text-gold text-dark transition-all duration-300 shadow-sm"
+                  aria-label="Next Slide"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {displayFeaturedProducts.map((product) => {
-                const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
-                const imageUrl =
-                  Array.isArray(product.images) && product.images[0]
-                    ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
-                    : '/images/choclates/rock-chocolate.jpeg';
-                const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
-                const isOutOfStock = stockQty <= 0;
-                const currentState = addingState[product.id] || 'idle';
+            {/* Main Slideshow Container */}
+            <div className="relative overflow-hidden">
+              <div
+                className="flex transition-transform duration-700 ease-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {displayFeaturedProducts.map((product) => {
+                  const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
+                  const imageUrl =
+                    Array.isArray(product.images) && product.images[0]
+                      ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
+                      : '/images/choclates/rock-chocolate.jpeg';
+                  const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
+                  const isOutOfStock = stockQty <= 0;
+                  const currentState = addingState[product.id] || 'idle';
 
-                return (
-                  <div key={product.id} className="group relative bg-white border border-parchment p-6 flex flex-col justify-between shadow-lux shadow-lux-hover transition-all duration-300">
-                    <div>
-                      <div className="flex justify-between items-center mb-4">
-                        <span className="text-[9px] font-bold uppercase tracking-ultra text-gold border border-gold/30 px-2.5 py-0.5 bg-cream/80">{categoryName}</span>
-                        <span className="text-[9px] font-bold uppercase tracking-ultra bg-gold text-dark font-mono px-2 py-0.5 shadow-sm">★ Featured</span>
-                      </div>
-                      <div className="relative w-full aspect-[4/3] bg-champagne/20 overflow-hidden mb-6 flex items-center justify-center p-2">
-                        <Image
-                          src={imageUrl}
-                          alt={product.name}
-                          fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          className={`object-contain group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`}
-                        />
-                        <button onClick={() => setQuickViewProduct(product)} className="absolute bottom-3 right-3 bg-cream/95 hover:bg-gold text-dark p-2.5 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100" aria-label={`Quick view ${product.name}`}>
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="font-editorial text-2xl font-normal text-dark group-hover:text-gold transition-colors">
-                          <Link href={`/shop/${product.slug || product.id}`}>{product.name}</Link>
-                        </h3>
-                        <p className="text-xs text-taupe font-light line-clamp-2 leading-relaxed">{product.description}</p>
-                        {product.weight && (
-                          <span className="inline-block text-[10px] font-mono font-semibold text-gold bg-champagne/80 px-2 py-0.5 rounded-sm">
-                            Pack: {product.weight}
-                          </span>
-                        )}
+                  return (
+                    <div key={product.id} className="w-full flex-shrink-0 px-2 sm:px-4">
+                      <div className="bg-white border border-parchment p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xl">
+                        {/* Image Column */}
+                        <div className="lg:col-span-6 relative aspect-square sm:aspect-[4/3] bg-champagne/20 border border-parchment p-4 flex items-center justify-center overflow-hidden group">
+                          <Image
+                            src={imageUrl}
+                            alt={product.name}
+                            fill
+                            priority
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                            className={`object-contain group-hover:scale-105 transition-transform duration-700 ${isOutOfStock ? 'grayscale opacity-75' : ''}`}
+                          />
+                          <button
+                            onClick={() => setQuickViewProduct(product)}
+                            className="absolute bottom-4 right-4 bg-cream/95 hover:bg-gold text-dark p-3 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100"
+                            aria-label={`Quick view ${product.name}`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        {/* Info Column */}
+                        <div className="lg:col-span-6 space-y-6">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-[10px] font-bold uppercase tracking-ultra text-gold border border-gold/40 px-3 py-1 bg-cream">{categoryName}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-ultra bg-gold text-dark px-2.5 py-1 font-mono">★ Featured Creation</span>
+                          </div>
+
+                          <h3 className="font-editorial text-3xl sm:text-5xl font-light text-dark leading-tight">
+                            <Link href={`/shop/${product.slug || product.id}`} className="hover:text-gold transition-colors">{product.name}</Link>
+                          </h3>
+
+                          <p className="text-sm sm:text-base text-taupe font-light leading-relaxed">{product.description}</p>
+
+                          {product.weight && (
+                            <span className="inline-block text-xs font-mono font-semibold text-gold bg-cream px-3 py-1 border border-gold/30">
+                              Pack Size: {product.weight}
+                            </span>
+                          )}
+
+                          <div className="flex items-baseline space-x-3 pt-2">
+                            <span className="text-3xl font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
+                            {product.compareAtPrice && <span className="text-sm font-mono text-taupe line-through">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</span>}
+                          </div>
+
+                          <div className="pt-4 flex flex-wrap items-center gap-4">
+                            <button
+                              disabled={isOutOfStock || currentState === 'adding'}
+                              onClick={(e) => !isOutOfStock && handleDirectAddToBag(product, e)}
+                              className={`px-8 py-4 text-xs uppercase tracking-ultra font-semibold transition-all duration-300 flex items-center space-x-2 shadow-lux ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed border border-parchment' : currentState === 'success' ? 'bg-emerald-800 text-white' : currentState === 'adding' ? 'bg-gold/80 text-dark opacity-80' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
+                            >
+                              {isOutOfStock ? <span>Out of Stock</span> : currentState === 'adding' ? <span>Adding...</span> : currentState === 'success' ? (<><Check className="w-4 h-4 text-white" /><span>Added to Bag</span></>) : (<><ShoppingBag className="w-4 h-4" /><span>Add to Bag</span></>)}
+                            </button>
+
+                            <Link
+                              href={`/shop/${product.slug || product.id}`}
+                              className="px-6 py-4 border border-dark text-dark hover:bg-dark hover:text-cream text-xs uppercase tracking-ultra font-semibold transition-all duration-300"
+                            >
+                              View Product Details
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="mt-8 pt-4 border-t border-parchment flex items-center justify-between">
-                      <div className="flex items-baseline space-x-2">
-                        <span className="text-lg font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
-                        {product.compareAtPrice && <span className="text-xs font-mono text-taupe line-through">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</span>}
-                      </div>
-                      <button
-                        disabled={isOutOfStock || currentState === 'adding'}
-                        onClick={(e) => !isOutOfStock && handleDirectAddToBag(product, e)}
-                        className={`px-5 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 flex items-center space-x-1.5 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed border border-parchment' : currentState === 'success' ? 'bg-emerald-800 text-white' : currentState === 'adding' ? 'bg-gold/80 text-dark opacity-80' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
-                      >
-                        {isOutOfStock ? <span>Out of Stock</span> : currentState === 'adding' ? <span>Adding...</span> : currentState === 'success' ? (<><Check className="w-3.5 h-3.5" /><span>Added ✓</span></>) : (<><ShoppingBag className="w-3.5 h-3.5" /><span>Add to Bag</span></>)}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Slide Pagination Dots */}
+            <div className="flex justify-center items-center space-x-2 pt-4">
+              {displayFeaturedProducts.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-2 transition-all duration-300 ${currentSlide === idx ? 'w-8 bg-gold' : 'w-2 bg-dark/20 hover:bg-dark/50'}`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
             </div>
           </div>
         </section>
