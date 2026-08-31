@@ -57,9 +57,13 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get('host') || '';
   const sessionToken = request.cookies.get('thalf_session')?.value;
 
-  // Always allow /admin/login and /admin-login on all domains without auto-redirecting (client page validates admin role)
-  if (pathname === '/admin-login' || pathname === '/admin/login') {
+  // Always allow /admin-login on all domains without auto-redirecting (client page validates admin role)
+  // /admin/login is kept as a legacy redirect → /admin-login
+  if (pathname === '/admin-login') {
     return NextResponse.next();
+  }
+  if (pathname === '/admin/login') {
+    return NextResponse.redirect(new URL('/admin-login', request.url), 308);
   }
 
   // -----------------------------------------------------------------------
@@ -92,12 +96,12 @@ export function proxy(request: NextRequest) {
   }
 
   // -----------------------------------------------------------------------
-  // 3. Customer domain (production): Block /admin/* pages (except /admin/login and /admin-login)
+  // 3. Customer domain (production): Block /admin/* pages (except /admin-login)
   // -----------------------------------------------------------------------
   if (!isAdminSubdomain(host) && isProductionHost(host)) {
-    if (pathname.startsWith('/admin') && pathname !== '/admin/login' && pathname !== '/admin-login') {
+    if (pathname.startsWith('/admin') && pathname !== '/admin-login') {
       if (!sessionToken) {
-        const loginUrl = new URL('/admin/login', request.url);
+        const loginUrl = new URL('/admin-login', request.url);
         loginUrl.searchParams.set('redirect', pathname);
         return NextResponse.redirect(loginUrl);
       }
@@ -121,11 +125,11 @@ export function proxy(request: NextRequest) {
 
   // Guard admin dashboard pages
   const isProtectedAdminRoute = PROTECTED_ADMIN_PAGES.some(route =>
-    pathname.startsWith(route) && pathname !== '/admin/login'
+    pathname.startsWith(route)
   );
 
   if (isProtectedAdminRoute && !sessionToken) {
-    const loginUrl = new URL('/admin/login', request.url);
+    const loginUrl = new URL('/admin-login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }

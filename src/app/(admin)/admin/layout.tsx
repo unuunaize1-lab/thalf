@@ -67,21 +67,21 @@ export default function AdminLayout({
   }, []);
 
   React.useEffect(() => {
-    if (pathname === '/admin-login' || pathname === '/admin/login') return;
+    if (pathname === '/admin-login') return;
 
     fetch('/api/v1/auth/me')
       .then(res => res.json())
       .then(data => {
         if (!data.success || !['ADMIN', 'SUPER_ADMIN', 'CONCIERGE'].includes(data.user?.role)) {
-          window.location.href = '/admin/login?redirect=' + encodeURIComponent(pathname);
+          window.location.href = '/admin-login?redirect=' + encodeURIComponent(pathname);
         }
       })
       .catch(() => {
-        window.location.href = '/admin/login?redirect=' + encodeURIComponent(pathname);
+        window.location.href = '/admin-login?redirect=' + encodeURIComponent(pathname);
       });
   }, [pathname]);
 
-  if (pathname === '/admin-login' || pathname === '/admin/login') {
+  if (pathname === '/admin-login') {
     return <>{children}</>;
   }
 
