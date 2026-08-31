@@ -228,7 +228,13 @@ export default function HomePage() {
             )}
           </div>
           <div className={`relative w-full ${aspectClass} bg-dark/5 overflow-hidden mb-6`}>
-            <Image src={imageUrl} alt={product.name} fill className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`} />
+            <Image 
+              src={imageUrl} 
+              alt={product.name} 
+              fill 
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className={`object-cover group-hover:scale-105 transition-transform duration-500 ${isOutOfStock ? 'grayscale opacity-70' : ''}`} 
+            />
             <button onClick={() => setQuickViewProduct(product)} className="absolute bottom-3 right-3 bg-cream/95 hover:bg-gold text-dark p-2.5 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100" aria-label={`Quick view ${product.name}`}>
               <Eye className="w-4 h-4" />
             </button>
@@ -274,7 +280,7 @@ export default function HomePage() {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             poster="/images/choclates/rock-chocolate.jpeg"
             className="w-full h-full object-cover filter blur-[4px] scale-105"
           >
@@ -312,7 +318,7 @@ export default function HomePage() {
                     loop
                     muted
                     playsInline
-                    preload="auto"
+                    preload="metadata"
                     poster="/images/choclates/rock-chocolate.jpeg"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   >
@@ -370,6 +376,7 @@ export default function HomePage() {
                   src={Array.isArray(featuredSpotlightProduct.images) && featuredSpotlightProduct.images[0] ? (typeof featuredSpotlightProduct.images[0] === 'string' ? featuredSpotlightProduct.images[0] : featuredSpotlightProduct.images[0].url) : '/images/choclates/rock-chocolate.jpeg'}
                   alt={featuredSpotlightProduct.name}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="object-cover"
                 />
               </div>
