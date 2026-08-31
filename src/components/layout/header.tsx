@@ -58,6 +58,10 @@ export default function Header() {
                 Shop
                 <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-gold transition-all duration-300 group-hover:w-full" />
               </Link>
+              <Link href="/hampers" className="group text-xs font-semibold uppercase tracking-ultra text-gold hover:text-gold transition-colors relative py-1">
+                Special Hampers 🎁
+                <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-gold transition-all duration-300 group-hover:w-full" />
+              </Link>
               <Link href="/about/our-craft" className="group text-xs font-semibold uppercase tracking-ultra text-dark hover:text-gold transition-colors relative py-1">
                 Our Craft
                 <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-gold transition-all duration-300 group-hover:w-full" />
@@ -157,6 +161,9 @@ export default function Header() {
             <div className="space-y-6 pt-4 text-center">
               <Link href="/shop" onClick={() => setMobileMenuOpen(false)} className="block font-editorial text-2xl uppercase tracking-ultra text-dark hover:text-gold">
                 Shop
+              </Link>
+              <Link href="/hampers" onClick={() => setMobileMenuOpen(false)} className="block font-editorial text-2xl uppercase tracking-ultra text-gold hover:text-gold">
+                Special Hampers 🎁
               </Link>
               <Link href="/about/our-craft" onClick={() => setMobileMenuOpen(false)} className="block font-editorial text-2xl uppercase tracking-ultra text-dark hover:text-gold">
                 Our Craft
