@@ -497,30 +497,16 @@ export default function HomePage() {
               })}
             </div>
 
-            {/* Automatic Slide Progress Indicators */}
-            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 pt-2">
-              {displayFeaturedProducts.map((p, idx) => {
-                const thumbUrl =
-                  Array.isArray(p.images) && p.images[0]
-                    ? typeof p.images[0] === 'string' ? p.images[0] : p.images[0].url
-                    : '/images/choclates/rock-chocolate.jpeg';
-                const isSelected = idx === currentSlide;
-
-                return (
-                  <div
-                    key={p.id}
-                    className={`relative h-20 sm:h-24 border transition-all duration-500 overflow-hidden bg-cream/10 p-2 flex items-center justify-center ${
-                      isSelected ? 'border-gold ring-2 ring-gold/50 opacity-100 scale-[1.02]' : 'border-gold/20 opacity-40'
-                    }`}
-                  >
-                    <Image src={thumbUrl} alt={p.name} fill className="object-contain p-1" />
-                    <div className="absolute inset-0 bg-dark/20" />
-                    <span className="absolute bottom-1 left-2 right-2 text-[9px] font-mono text-cream truncate text-left z-10">
-                      {p.name}
-                    </span>
-                  </div>
-                );
-              })}
+            {/* Sleek Automatic Slide Progress Pill Indicators */}
+            <div className="flex justify-center items-center space-x-2 pt-4">
+              {displayFeaturedProducts.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-1.5 transition-all duration-700 rounded-full ${
+                    idx === currentSlide ? 'w-10 bg-gold' : 'w-2 bg-gold/20'
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </section>
