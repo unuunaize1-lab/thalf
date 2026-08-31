@@ -144,7 +144,7 @@ export default function HomePage() {
           }
         }
       } catch (err) {
-        console.error('HomePage loadData error:', err);
+        console.error('HomePage load error:', err);
       }
     }
     loadData();
@@ -152,6 +152,18 @@ export default function HomePage() {
       isMounted = false;
     };
   }, []);
+
+  // Automatic slide transition timer for Featured Products
+  const featuredProducts = products.filter((p) => (p as any).featured || (p as any).isFeatured);
+  const displayFeaturedProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 3);
+
+  useEffect(() => {
+    if (displayFeaturedProducts.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev === displayFeaturedProducts.length - 1 ? 0 : prev + 1));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [displayFeaturedProducts.length]);
 
   useEffect(() => {
     const playVideos = () => {
