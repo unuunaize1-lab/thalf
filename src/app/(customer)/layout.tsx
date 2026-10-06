@@ -12,7 +12,7 @@ export default function CustomerLayout({
   return (
     <>
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow bg-[#100805] text-[#F4EBDD] min-h-screen">{children}</main>
       <CartDrawer />
       <QuickViewModal />
       <Footer />

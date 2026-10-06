@@ -38,7 +38,9 @@ export class PushNotificationService {
    * Public VAPID Key to expose safely to authenticated Admin client browsers
    */
   public getPublicKey(): string | null {
-    return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY || null;
+    const rawKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY || null;
+    if (!rawKey) return null;
+    return rawKey.trim().replace(/^["']|["']$/g, '');
   }
 
   /**

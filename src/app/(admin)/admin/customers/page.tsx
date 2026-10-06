@@ -16,76 +16,52 @@ interface CustomerRecord {
   recentOrders: { orderNumber: string; date: string; amount: number; status: string }[];
 }
 
-const MOCK_CUSTOMERS: CustomerRecord[] = [
-  {
-    id: 'usr-001',
-    name: 'Sara Al-Rashidi',
-    email: 'sara.rashidi@example.com',
-    phone: '+91 98765 43210',
-    totalOrders: 6,
-    totalSpent: 18400,
-    joinedDate: '2025-11-12',
-    role: 'CUSTOMER',
-    defaultCity: 'Mumbai',
-    recentOrders: [
-      { orderNumber: 'THF-2026-9812', date: '2026-08-03', amount: 2450, status: 'PENDING' },
-      { orderNumber: 'THF-2026-9102', date: '2026-06-18', amount: 4500, status: 'DELIVERED' },
-    ],
-  },
-  {
-    id: 'usr-002',
-    name: 'Khalid Mansour',
-    email: 'khalid.m@example.com',
-    phone: '+91 91234 56789',
-    totalOrders: 4,
-    totalSpent: 12900,
-    joinedDate: '2026-01-05',
-    role: 'CUSTOMER',
-    defaultCity: 'Hyderabad',
-    recentOrders: [
-      { orderNumber: 'THF-2026-9811', date: '2026-08-02', amount: 4800, status: 'PACKED' },
-    ],
-  },
-  {
-    id: 'usr-003',
-    name: 'Vikram Singh',
-    email: 'vikram.singh@example.com',
-    phone: '+91 99887 76655',
-    totalOrders: 11,
-    totalSpent: 42500,
-    joinedDate: '2025-08-20',
-    role: 'CUSTOMER',
-    defaultCity: 'Gurugram',
-    recentOrders: [
-      { orderNumber: 'THF-2026-9810', date: '2026-08-02', amount: 6850, status: 'SHIPPED' },
-    ],
-  },
-  {
-    id: 'usr-004',
-    name: 'Ananya Roy',
-    email: 'ananya.roy@example.com',
-    phone: '+91 97654 32109',
-    totalOrders: 3,
-    totalSpent: 7800,
-    joinedDate: '2026-03-14',
-    role: 'CUSTOMER',
-    defaultCity: 'Kolkata',
-    recentOrders: [
-      { orderNumber: 'THF-2026-9809', date: '2026-08-01', amount: 3900, status: 'DELIVERED' },
-    ],
-  },
-];
-
 export default function AdminCustomersPage() {
-  const [customers, setCustomers] = useState<CustomerRecord[]>(MOCK_CUSTOMERS);
+  const [customers, setCustomers] = useState<CustomerRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerRecord | null>(null);
 
+  const fetchCustomers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('/api/v1/admin/customers');
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        if (res.status === 401) {
+          window.location.href = '/secret-admin?redirect=/admin/customers';
+          return;
+        }
+        throw new Error(`Server error (${res.status})`);
+      }
+      const data = await res.json();
+      if (res.ok && data.success && Array.isArray(data.customers)) {
+        setCustomers(data.customers);
+      } else {
+        setError(data.error || 'Failed to fetch customer directory.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Error connecting to server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchCustomers();
+  }, []);
+
   const filteredCustomers = customers.filter(c =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.phone.includes(searchQuery)
+    (c.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (c.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (c.phone || '').includes(searchQuery)
   );
+
+  const avgLtv = customers.length > 0
+    ? Math.round(customers.reduce((acc, c) => acc + (c.totalSpent || 0), 0) / customers.length)
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -107,17 +83,24 @@ export default function AdminCustomersPage() {
         <div className="bg-cream border border-parchment p-5 shadow-lux">
           <span className="text-[9px] font-bold uppercase tracking-wider text-dark/60">Average Lifetime Value</span>
           <p className="text-2xl font-serif font-bold text-gold mt-2">
-            ₹{Math.round(customers.reduce((acc, c) => acc + c.totalSpent, 0) / customers.length).toLocaleString()}
+            ₹{avgLtv.toLocaleString()}
           </p>
         </div>
 
         <div className="bg-cream border border-parchment p-5 shadow-lux">
           <span className="text-[9px] font-bold uppercase tracking-wider text-dark/60">Total Cumulative Orders</span>
           <p className="text-2xl font-serif font-bold text-dark mt-2">
-            {customers.reduce((acc, c) => acc + c.totalOrders, 0)} Orders
+            {customers.reduce((acc, c) => acc + (c.totalOrders || 0), 0)} Orders
           </p>
         </div>
       </div>
+
+      {error && (
+        <div className="p-3 bg-red-100 border border-red-300 text-red-800 text-xs font-semibold flex items-center justify-between">
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="font-bold text-red-900">X</button>
+        </div>
+      )}
 
       {/* Search */}
       <div className="bg-cream border border-parchment p-4 shadow-lux flex items-center justify-between">
@@ -131,60 +114,71 @@ export default function AdminCustomersPage() {
             className="w-full pl-9 pr-4 py-2 bg-cream border border-parchment text-xs focus:outline-none focus:border-gold"
           />
         </div>
+        <span className="text-[10px] font-bold uppercase text-dark/60">{filteredCustomers.length} Customers</span>
       </div>
 
       {/* Table */}
-      <div className="bg-cream border border-parchment shadow-lux overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-parchment text-dark/60 uppercase text-[9px] font-bold tracking-wider bg-parchment/30">
-                <th className="py-4 px-4">Patron Name</th>
-                <th className="py-4 px-4">Contact Info</th>
-                <th className="py-4 px-4">Location</th>
-                <th className="py-4 px-4">Total Orders</th>
-                <th className="py-4 px-4">Lifetime Spend</th>
-                <th className="py-4 px-4">Member Since</th>
-                <th className="py-4 px-4 text-right">Profile</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-parchment/40">
-              {filteredCustomers.map(c => (
-                <tr key={c.id} className="hover:bg-parchment/20 transition-colors">
-                  <td className="py-4 px-4 font-serif font-bold text-dark text-sm">
-                    {c.name}
-                  </td>
-
-                  <td className="py-4 px-4">
-                    <p className="text-xs text-dark">{c.email}</p>
-                    <span className="text-[10px] text-dark/50 block">{c.phone}</span>
-                  </td>
-
-                  <td className="py-4 px-4 font-semibold text-dark/70">{c.defaultCity}</td>
-
-                  <td className="py-4 px-4 font-bold text-dark">{c.totalOrders} Orders</td>
-
-                  <td className="py-4 px-4 font-serif font-bold text-dark text-sm">
-                    ₹{c.totalSpent.toLocaleString()}
-                  </td>
-
-                  <td className="py-4 px-4 text-dark/60 text-[10px] font-mono">{c.joinedDate}</td>
-
-                  <td className="py-4 px-4 text-right">
-                    <button
-                      onClick={() => setSelectedCustomer(c)}
-                      className="p-1.5 text-dark hover:text-gold hover:bg-parchment/60 transition-colors"
-                      title="View Customer Profile"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {loading ? (
+        <div className="p-12 text-center text-xs font-bold uppercase tracking-wider text-dark/60 bg-cream border border-parchment">
+          Loading Customer Directory...
         </div>
-      </div>
+      ) : filteredCustomers.length === 0 ? (
+        <div className="p-12 text-center text-xs font-bold uppercase tracking-wider text-dark/60 bg-cream border border-parchment">
+          No registered patrons found in database.
+        </div>
+      ) : (
+        <div className="bg-cream border border-parchment shadow-lux overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-parchment text-dark/60 uppercase text-[9px] font-bold tracking-wider bg-parchment/30">
+                  <th className="py-4 px-4">Patron Name</th>
+                  <th className="py-4 px-4">Contact Info</th>
+                  <th className="py-4 px-4">Location</th>
+                  <th className="py-4 px-4">Total Orders</th>
+                  <th className="py-4 px-4">Lifetime Spend</th>
+                  <th className="py-4 px-4">Member Since</th>
+                  <th className="py-4 px-4 text-right">Profile</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-parchment/40">
+                {filteredCustomers.map(c => (
+                  <tr key={c.id} className="hover:bg-parchment/20 transition-colors">
+                    <td className="py-4 px-4 font-serif font-bold text-dark text-sm">
+                      {c.name}
+                    </td>
+
+                    <td className="py-4 px-4">
+                      <p className="text-xs text-dark">{c.email}</p>
+                      <span className="text-[10px] text-dark/50 block">{c.phone}</span>
+                    </td>
+
+                    <td className="py-4 px-4 font-semibold text-dark/70">{c.defaultCity}</td>
+
+                    <td className="py-4 px-4 font-bold text-dark">{c.totalOrders} Orders</td>
+
+                    <td className="py-4 px-4 font-serif font-bold text-dark text-sm">
+                      ₹{(c.totalSpent || 0).toLocaleString()}
+                    </td>
+
+                    <td className="py-4 px-4 text-dark/60 text-[10px] font-mono">{c.joinedDate}</td>
+
+                    <td className="py-4 px-4 text-right">
+                      <button
+                        onClick={() => setSelectedCustomer(c)}
+                        className="p-1.5 text-dark hover:text-gold hover:bg-parchment/60 transition-colors"
+                        title="View Customer Profile"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       {/* Customer Detail Drawer */}
       {selectedCustomer && (

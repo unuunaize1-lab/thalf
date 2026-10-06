@@ -187,20 +187,23 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="bg-cream text-dark min-h-screen pb-24">
+    <div className="bg-[#100805] text-[#F4EBDD] min-h-screen pb-24 selection:bg-[#B88A42] selection:text-[#100805]" suppressHydrationWarning>
       {/* Shop Hero */}
-      <div className="bg-obsidian text-champagne border-b border-gold/20 py-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(197,160,89,0.12),_transparent_70%)] pointer-events-none" />
+      <div className="bg-[#0B0604] text-[#F4EBDD] border-b border-[#B88A42]/20 py-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(184,138,66,0.12),_transparent_70%)] pointer-events-none" />
         <div className="relative z-10 max-w-3xl mx-auto space-y-4">
-          <h1 className="font-editorial text-4xl sm:text-6xl font-light text-cream">Shop</h1>
-          <p className="text-xs sm:text-sm text-taupe font-light max-w-lg mx-auto leading-relaxed">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.35em] text-[#B88A42] block">
+            ARTISANAL CATALOGUE
+          </span>
+          <h1 className="font-editorial text-4xl sm:text-6xl font-light text-[#F4EBDD]">All Chocolates</h1>
+          <p className="text-xs sm:text-sm text-[#B9AA99] font-light max-w-lg mx-auto leading-relaxed">
             Handcrafted chocolates for sharing and everyday indulgence.
           </p>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="sticky top-20 z-30 bg-cream/95 backdrop-blur-md border-b border-parchment py-4 px-4 sm:px-6 lg:px-8 shadow-sm">
+      <div className="sticky top-20 z-30 bg-[#0E0805]/95 backdrop-blur-md border-b border-[#B88A42]/20 py-4 px-4 sm:px-6 lg:px-8 shadow-2xl">
         <div className="mx-auto max-w-7xl flex flex-col md:flex-row md:items-center justify-between gap-4">
 
           {/* Search + Category Pills */}
@@ -211,10 +214,11 @@ export default function ShopPage() {
                 placeholder="Search chocolates..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-cream border border-parchment px-3 py-1.5 text-xs text-dark placeholder:text-taupe/60 focus:border-gold outline-none"
+                className="w-full bg-[#160C08] border border-[#B88A42]/30 px-3 py-1.5 text-xs text-[#F4EBDD] placeholder:text-[#B9AA99]/60 focus:border-[#B88A42] outline-none font-sans"
+                suppressHydrationWarning
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1.5 text-xs text-taupe hover:text-dark">✕</button>
+                <button onClick={() => setSearchQuery('')} className="absolute right-2 top-1.5 text-xs text-[#B9AA99] hover:text-[#F4EBDD]">✕</button>
               )}
             </div>
 
@@ -225,10 +229,11 @@ export default function ShopPage() {
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
+                    suppressHydrationWarning
                     className={`px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 whitespace-nowrap ${
                       selectedCategory === cat
-                        ? 'bg-dark text-cream border border-dark'
-                        : 'bg-champagne/60 border border-parchment text-taupe hover:text-dark hover:border-gold'
+                        ? 'bg-[#B88A42] text-[#100805] font-bold shadow-md'
+                        : 'bg-[#1A0D08] border border-[#B88A42]/25 text-[#B9AA99] hover:text-[#F4EBDD] hover:border-[#B88A42]/60'
                     }`}
                   >
                     {cat}
@@ -243,24 +248,27 @@ export default function ShopPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-cream border border-parchment px-2 py-1 text-xs text-dark focus:border-gold outline-none"
+              className="bg-[#160C08] border border-[#B88A42]/30 px-2 py-1 text-xs text-[#F4EBDD] focus:border-[#B88A42] outline-none font-mono"
+              suppressHydrationWarning
             >
               <option value="featured">Featured</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
             </select>
 
-            <div className="hidden sm:flex border border-parchment bg-cream">
+            <div className="hidden sm:flex border border-[#B88A42]/30 bg-[#160C08]">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 ${viewMode === 'grid' ? 'bg-dark text-gold' : 'text-taupe hover:text-dark'}`}
+                suppressHydrationWarning
+                className={`p-1.5 ${viewMode === 'grid' ? 'bg-[#B88A42] text-[#100805]' : 'text-[#B9AA99] hover:text-[#F4EBDD]'}`}
                 aria-label="Grid View"
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 ${viewMode === 'list' ? 'bg-dark text-gold' : 'text-taupe hover:text-dark'}`}
+                suppressHydrationWarning
+                className={`p-1.5 ${viewMode === 'list' ? 'bg-[#B88A42] text-[#100805]' : 'text-[#B9AA99] hover:text-[#F4EBDD]'}`}
                 aria-label="List View"
               >
                 <List className="w-4 h-4" />
@@ -275,12 +283,13 @@ export default function ShopPage() {
 
       {/* Products */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-6 flex justify-between items-center text-xs text-taupe">
-          <span>Showing <strong className="text-dark font-mono">{filteredProducts.length}</strong> {filteredProducts.length === 1 ? 'chocolate' : 'chocolates'}</span>
+        <div className="mb-6 flex justify-between items-center text-xs text-[#B9AA99]">
+          <span>Showing <strong className="text-[#F4EBDD] font-mono">{filteredProducts.length}</strong> {filteredProducts.length === 1 ? 'chocolate' : 'chocolates'}</span>
           {(selectedCategory !== 'All' || searchQuery !== '') && (
             <button
               onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
-              className="text-gold underline hover:text-dark"
+              className="text-[#B88A42] underline hover:text-[#F4EBDD]"
+              suppressHydrationWarning
             >
               Reset filters
             </button>
@@ -288,18 +297,19 @@ export default function ShopPage() {
         </div>
 
         {error ? (
-          <div className="py-16 text-center border border-red-200 bg-red-50 p-8 my-8">
-            <h3 className="font-editorial text-2xl text-red-900 mb-2">Something went wrong</h3>
-            <p className="text-xs text-red-800 max-w-md mx-auto font-light leading-relaxed mb-4">{error}</p>
+          <div className="py-16 text-center border border-red-900/40 bg-red-950/20 p-8 my-8">
+            <h3 className="font-editorial text-2xl text-red-200 mb-2">Something went wrong</h3>
+            <p className="text-xs text-red-300 max-w-md mx-auto font-light leading-relaxed mb-4">{error}</p>
           </div>
         ) : loading ? (
-          <div className="py-16 text-center text-xs font-mono text-dark/50">Loading...</div>
+          <div className="py-16 text-center text-xs font-mono text-[#B9AA99]">Loading chocolates...</div>
         ) : filteredProducts.length === 0 ? (
-          <div className="py-16 text-center border border-parchment/60 bg-cream/50 p-8 my-8">
-            <h3 className="font-editorial text-2xl text-dark mb-2">No Chocolates Match Your Search</h3>
+          <div className="py-16 text-center border border-[#B88A42]/20 bg-[#160C08] p-8 my-8">
+            <h3 className="font-editorial text-2xl text-[#F4EBDD] mb-2">No Chocolates Match Your Search</h3>
             <button
               onClick={() => { setSelectedCategory('All'); setSearchQuery(''); }}
-              className="px-6 py-2.5 bg-dark text-cream text-xs uppercase tracking-wider font-semibold hover:bg-gold hover:text-dark transition-colors"
+              className="px-6 py-2.5 bg-[#B88A42] text-[#100805] text-xs uppercase tracking-wider font-semibold hover:bg-[#D09A4E] transition-colors"
+              suppressHydrationWarning
             >
               Clear Filters
             </button>
@@ -307,7 +317,7 @@ export default function ShopPage() {
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => {
-              const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
+              const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'ARTISANAL CHOCOLATES');
               const imageUrl =
                 Array.isArray(product.images) && product.images[0]
                   ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
@@ -315,39 +325,53 @@ export default function ShopPage() {
               const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
               const isOutOfStock = stockQty <= 0;
               return (
-                <div key={product.id} className="group relative bg-white/70 border border-parchment/70 p-6 flex flex-col justify-between shadow-lux shadow-lux-hover transition-all duration-300">
-                  <div className="flex justify-between items-center mb-4 z-10">
-                    {categoryName && (
-                      <span className="text-[9px] font-bold uppercase tracking-ultra text-gold border border-gold/30 px-2 py-0.5 bg-cream">{categoryName}</span>
-                    )}
-                    {isOutOfStock && (
-                      <span className="text-[9px] font-bold uppercase tracking-ultra bg-red-950 text-red-200 border border-red-800 px-2 py-0.5">Out of Stock</span>
-                    )}
+                <div key={product.id} className="group relative bg-[#1A0D08] border border-[#B88A42]/22 hover:border-[#B88A42]/60 p-6 sm:p-7 flex flex-col justify-between transition-all duration-500 ease-out hover:shadow-[0_20px_50px_-15px_rgba(208,154,78,0.18)] hover:-translate-y-1">
+                  <div>
+                    <div className="flex justify-between items-center mb-4 z-10">
+                      {categoryName && (
+                        <span className="text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-[#B88A42] border border-[#B88A42]/30 px-2 py-0.5 bg-[#0B0604]">{categoryName}</span>
+                      )}
+                      {isOutOfStock && (
+                        <span className="text-[9px] font-mono uppercase tracking-widest bg-red-950 text-red-200 border border-red-800 px-2 py-0.5">Out of Stock</span>
+                      )}
+                    </div>
+                    <div className="relative w-full aspect-[4/3] bg-[#120704] border border-[#B88A42]/15 overflow-hidden mb-6 flex items-center justify-center p-3 shadow-inner">
+                      <Image src={imageUrl} alt={product.name} fill className={`object-contain p-2 group-hover:scale-105 transition-transform duration-700 ease-out ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
+                      <button 
+                        onClick={() => setQuickViewProduct(product)} 
+                        className="absolute bottom-3 right-3 bg-[#0B0604]/80 text-[#B9AA99] hover:text-[#B88A42] p-2.5 shadow-md backdrop-blur-sm border border-[#B88A42]/30 transition-all duration-300 opacity-0 group-hover:opacity-100" 
+                        aria-label={`Quick view ${product.name}`}
+                        suppressHydrationWarning
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="space-y-2 flex-1">
+                      <h3 className="font-editorial text-2xl font-light text-[#F4EBDD] group-hover:text-[#D09A4E] transition-colors">
+                        <Link href={`/shop/${product.slug || product.id}`}>{product.name}</Link>
+                      </h3>
+                      <p className="text-xs text-[#B9AA99] font-light line-clamp-2 leading-relaxed">{product.description}</p>
+                      {product.weight && (
+                        <span className="inline-block text-[10px] font-mono font-semibold text-[#B88A42] bg-[#B88A42]/10 border border-[#B88A42]/20 px-2 py-0.5 rounded-sm">
+                          Pack: {product.weight}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="relative w-full aspect-[4/3] bg-champagne/20 overflow-hidden mb-6 flex items-center justify-center p-2">
-                    <Image src={imageUrl} alt={product.name} fill className={`object-contain group-hover:scale-105 transition-transform duration-500 ease-out ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
-                    <button onClick={() => setQuickViewProduct(product)} className="absolute bottom-3 right-3 bg-cream/95 hover:bg-gold text-dark p-2.5 shadow-md backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100" aria-label={`Quick view ${product.name}`}>
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="space-y-2 flex-1">
-                    <h3 className="font-editorial text-2xl font-normal text-dark group-hover:text-gold transition-colors">
-                      <Link href={`/shop/${product.slug || product.id}`}>{product.name}</Link>
-                    </h3>
-                    <p className="text-xs text-taupe font-light line-clamp-2 leading-relaxed">{product.description}</p>
-                    {product.weight && (
-                      <span className="inline-block text-[10px] font-mono font-semibold text-gold bg-champagne/80 px-2 py-0.5 rounded-sm">
-                        Pack: {product.weight}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-8 pt-4 border-t border-parchment/60 flex items-center justify-between">
-                    <span className="text-lg font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
+                  <div className="mt-8 pt-4 border-t border-[#B88A42]/20 flex items-center justify-between">
+                    <span className="text-xl font-editorial font-bold text-[#D09A4E]">₹{Number(product.price).toLocaleString('en-IN')}</span>
 
                     <button
                       disabled={isOutOfStock}
                       onClick={(e) => !isOutOfStock && handleQuickAdd(product, e)}
-                      className={`px-5 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 flex items-center space-x-1.5 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed border border-parchment' : addedId === product.id ? 'bg-emerald-800 text-white' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
+                      suppressHydrationWarning
+                      className={`px-5 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 flex items-center space-x-1.5 ${
+                        isOutOfStock 
+                          ? 'bg-[#211109] text-[#B9AA99]/50 cursor-not-allowed border border-[#B88A42]/20' 
+                          : addedId === product.id 
+                          ? 'bg-emerald-900 text-white border border-emerald-500' 
+                          : 'bg-[#B88A42] text-[#100805] hover:bg-[#D09A4E]'
+                      }`}
                     >
                       {isOutOfStock ? <span>Out of Stock</span> : addedId === product.id ? (<><Check className="w-3.5 h-3.5" /><span>Added</span></>) : (<><ShoppingBag className="w-3.5 h-3.5" /><span>Add to Bag</span></>)}
                     </button>
@@ -359,7 +383,7 @@ export default function ShopPage() {
         ) : (
           <div className="space-y-4">
             {filteredProducts.map((product) => {
-              const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'Artisanal Chocolates');
+              const categoryName = typeof product.category === 'object' ? product.category?.name : (product.category || 'ARTISANAL CHOCOLATES');
               const imageUrl =
                 Array.isArray(product.images) && product.images[0]
                   ? typeof product.images[0] === 'string' ? product.images[0] : product.images[0].url
@@ -367,34 +391,40 @@ export default function ShopPage() {
               const stockQty = product.inventory ? product.inventory.stockQuantity - (product.inventory.reservedStock || 0) : 50;
               const isOutOfStock = stockQty <= 0;
               return (
-                <div key={product.id} className="bg-white/70 border border-parchment p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm hover:border-gold/50 transition-colors">
+                <div key={product.id} className="bg-[#1A0D08] border border-[#B88A42]/25 p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-md hover:border-[#B88A42]/60 transition-colors">
                   <div className="flex items-center space-x-6">
-                    <div className="relative w-28 h-28 bg-champagne/20 flex-shrink-0 overflow-hidden flex items-center justify-center p-1">
-                      <Image src={imageUrl} alt={product.name} fill className={`object-contain ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
+                    <div className="relative w-28 h-28 bg-[#120704] border border-[#B88A42]/20 flex-shrink-0 overflow-hidden flex items-center justify-center p-2">
+                      <Image src={imageUrl} alt={product.name} fill className={`object-contain p-1 ${isOutOfStock ? 'grayscale opacity-75' : ''}`} />
                     </div>
                     <div className="space-y-1">
-                      {categoryName && <span className="text-[9px] font-bold uppercase tracking-ultra text-gold">{categoryName}</span>}
-                      {isOutOfStock && <span className="text-[9px] font-bold uppercase tracking-ultra bg-red-950 text-red-200 px-2 py-0.5 ml-2">Out of Stock</span>}
-                      <h3 className="font-editorial text-2xl font-normal text-dark hover:text-gold transition-colors">
+                      {categoryName && <span className="text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-[#B88A42]">{categoryName}</span>}
+                      {isOutOfStock && <span className="text-[9px] font-mono uppercase tracking-widest bg-red-950 text-red-200 px-2 py-0.5 ml-2 border border-red-800">Out of Stock</span>}
+                      <h3 className="font-editorial text-2xl font-light text-[#F4EBDD] hover:text-[#D09A4E] transition-colors">
                         <Link href={`/shop/${product.slug || product.id}`}>{product.name}</Link>
                       </h3>
-                      <p className="text-xs text-taupe font-light max-w-xl line-clamp-1">{product.description}</p>
+                      <p className="text-xs text-[#B9AA99] font-light max-w-xl line-clamp-1">{product.description}</p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between md:justify-end space-x-6 pt-4 md:pt-0 border-t md:border-t-0 border-parchment">
-                    <span className="text-xl font-editorial font-bold text-dark">₹{Number(product.price).toLocaleString('en-IN')}</span>
+                  <div className="flex items-center justify-between md:justify-end space-x-6 pt-4 md:pt-0 border-t md:border-t-0 border-[#B88A42]/20">
+                    <span className="text-2xl font-editorial font-bold text-[#D09A4E]">₹{Number(product.price).toLocaleString('en-IN')}</span>
 
                     <div className="flex space-x-2">
-                      <button onClick={() => setQuickViewProduct(product)} className="p-2.5 border border-parchment hover:border-gold text-taupe hover:text-dark" aria-label={`Quick view ${product.name}`}>
+                      <button 
+                        onClick={() => setQuickViewProduct(product)} 
+                        className="p-2.5 border border-[#B88A42]/30 hover:border-[#B88A42] text-[#B9AA99] hover:text-[#F4EBDD]" 
+                        aria-label={`Quick view ${product.name}`}
+                        suppressHydrationWarning
+                      >
                         <Eye className="w-4 h-4" />
                       </button>
 
                       <button
                         disabled={isOutOfStock}
                         onClick={(e) => !isOutOfStock && handleQuickAdd(product, e)}
-                        className={`px-6 py-2.5 text-xs uppercase tracking-ultra font-semibold transition-all duration-300 ${isOutOfStock ? 'bg-parchment text-taupe/60 cursor-not-allowed' : 'bg-dark text-cream hover:bg-gold hover:text-dark'}`}
+                        suppressHydrationWarning
+                        className={`px-6 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 ${isOutOfStock ? 'bg-[#211109] text-[#B9AA99]/50 cursor-not-allowed border border-[#B88A42]/20' : 'bg-[#B88A42] text-[#100805] hover:bg-[#D09A4E]'}`}
                       >
-                        {isOutOfStock ? 'Out of Stock' : 'Add to Bag'}
+                        {isOutOfStock ? <span>Out of Stock</span> : addedId === product.id ? <span>Added ✓</span> : <span>Add to Bag</span>}
                       </button>
                     </div>
                   </div>

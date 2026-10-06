@@ -7,7 +7,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { session, errorResponse } = await requirePermission(req, 'products.update');
-  if (errorResponse || !session) return errorResponse;
+  if (errorResponse) return errorResponse;
+  if (!session) {
+    return NextResponse.json({ success: false, error: 'Unauthorized session' }, { status: 401 });
+  }
 
   try {
     const resolvedParams = await params;

@@ -5,7 +5,10 @@ import { MediaService } from '@/services/media.service';
 export async function POST(req: NextRequest) {
   // 1. Authorize admin request
   const { session, errorResponse } = await requirePermission(req, 'products.update');
-  if (errorResponse || !session) return errorResponse;
+  if (errorResponse) return errorResponse;
+  if (!session) {
+    return NextResponse.json({ success: false, error: 'Unauthorized session' }, { status: 401 });
+  }
 
   try {
     const contentType = req.headers.get('content-type') || '';

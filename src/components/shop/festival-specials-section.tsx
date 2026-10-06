@@ -153,6 +153,7 @@ export function FestivalSpecialsSection() {
                           <div className="absolute inset-0 bg-dark/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-3 p-4">
                             <button
                               onClick={() => setQuickViewProduct(product)}
+                              suppressHydrationWarning
                               className="px-3 py-2 bg-cream text-dark text-[10px] font-bold uppercase tracking-wider hover:bg-gold transition-colors flex items-center space-x-1"
                               title="Quick View"
                             >
@@ -164,6 +165,7 @@ export function FestivalSpecialsSection() {
                               <button
                                 onClick={(e) => handleDirectAddToBag(product, e)}
                                 disabled={currentState !== 'idle'}
+                                suppressHydrationWarning
                                 className="px-3 py-2 bg-gold text-dark text-[10px] font-bold uppercase tracking-wider hover:bg-gold-light transition-colors flex items-center space-x-1"
                               >
                                 {currentState === 'adding' ? (

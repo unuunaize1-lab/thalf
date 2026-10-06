@@ -4,14 +4,31 @@ import React, { useState, useEffect } from 'react';
 import { Bell, BellOff, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 
 function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+  if (!base64String || typeof base64String !== 'string') {
+    throw new Error('VAPID public key is missing.');
   }
-  return outputArray;
+
+  // 1. Strip surrounding quotes, whitespace, and newlines
+  let cleanStr = base64String.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, '');
+
+  // 2. Convert URL-safe base64 (- and _) to standard base64 (+ and /)
+  cleanStr = cleanStr.replace(/-/g, '+').replace(/_/g, '/');
+
+  // 3. Add required Base64 '=' padding
+  const paddingNeeded = (4 - (cleanStr.length % 4)) % 4;
+  const paddedBase64 = cleanStr + '='.repeat(paddingNeeded);
+
+  try {
+    const rawData = window.atob(paddedBase64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  } catch (err: any) {
+    console.error('[AdminNotificationToggle] Base64 decode failed for VAPID key:', base64String, err);
+    throw new Error('VAPID public key is incorrectly formatted in environment variables.');
+  }
 }
 
 export function AdminNotificationToggle() {

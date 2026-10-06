@@ -33,6 +33,31 @@ const nextConfig: NextConfig = {
         destination: 'https://thalf.store/:path*',
         permanent: true,
       },
+      {
+        source: '/returns',
+        destination: '/return-policy',
+        permanent: true,
+      },
+      {
+        source: '/refunds',
+        destination: '/refund-policy',
+        permanent: true,
+      },
+      {
+        source: '/returns-refunds',
+        destination: '/return-policy',
+        permanent: true,
+      },
+      {
+        source: '/shipping',
+        destination: '/shipping-policy',
+        permanent: true,
+      },
+      {
+        source: '/privacy',
+        destination: '/privacy-policy',
+        permanent: true,
+      },
     ];
   },
 };

@@ -20,6 +20,10 @@ const CUSTOMER_ONLY_ROUTES = [
   '/checkout',
   '/about',
   '/returns-refunds',
+  '/return-policy',
+  '/refund-policy',
+  '/returns',
+  '/refunds',
 ];
 
 /**
@@ -167,6 +171,10 @@ export const config = {
     '/about',
     '/returns-refunds/:path*',
     '/returns-refunds',
+    '/return-policy',
+    '/refund-policy',
+    '/returns',
+    '/refunds',
     '/',
   ],
 };

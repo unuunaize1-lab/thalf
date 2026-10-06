@@ -50,7 +50,7 @@ export function CustomerReviewsSection() {
   const marqueeSequence = [...REVIEWS, ...REVIEWS, ...REVIEWS, ...REVIEWS];
 
   return (
-    <section className="py-24 bg-champagne/40 border-b border-parchment relative overflow-hidden">
+    <section className="py-24 bg-[#140A06] border-b border-[#B88A42]/20 relative overflow-hidden select-none">
       {/* CSS Animation Keyframes for Continuous Infinite Marquee */}
       <style jsx global>{`
         @keyframes marqueeReviewsLeft {
@@ -82,30 +82,30 @@ export function CustomerReviewsSection() {
       `}</style>
 
       {/* Ambient background decoration */}
-      <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#c5a059_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#B88A42_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
 
       {/* Section Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 mb-16 relative z-10">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-white border border-gold/30 rounded-full shadow-sm mb-2">
-          <MessageSquareHeart className="w-4 h-4 text-gold" />
-          <span className="text-[10px] font-bold uppercase tracking-ultra text-gold">
+        <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-[#211109] border border-[#B88A42]/30 rounded-full shadow-sm mb-2">
+          <MessageSquareHeart className="w-4 h-4 text-[#B88A42]" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#B88A42]">
             Patron Testimonials
           </span>
         </div>
 
-        <h2 className="font-editorial text-3xl sm:text-5xl font-light text-dark leading-tight">
-          Kind Words <span className="poetic-italic font-normal text-gold">&</span> Real Reviews
+        <h2 className="font-editorial text-3xl sm:text-5xl font-light text-[#F4EBDD] leading-tight">
+          Kind Words <span className="poetic-italic font-normal text-[#D09A4E]">&</span> Real Reviews
         </h2>
 
-        <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed max-w-xl mx-auto">
+        <p className="text-xs sm:text-sm text-[#B9AA99] font-light leading-relaxed max-w-xl mx-auto">
           Authentic feedback and client messages shared directly by THALF connoisseurs.
         </p>
 
         <div className="flex justify-center items-center space-x-1 pt-2">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-4 h-4 text-gold fill-gold" />
+            <Star key={i} className="w-4 h-4 text-[#B88A42] fill-[#B88A42]" />
           ))}
-          <span className="text-xs font-mono text-taupe ml-2 font-semibold">5.0 / 5.0 Rating</span>
+          <span className="text-xs font-mono text-[#B9AA99] ml-2 font-semibold">5.0 / 5.0 Rating</span>
         </div>
       </div>
 
@@ -116,10 +116,10 @@ export function CustomerReviewsSection() {
             <div
               key={`marquee-rev-${review.id}-${idx}`}
               onClick={() => setActiveReview(review)}
-              className="flex-shrink-0 w-64 sm:w-80 bg-white border border-parchment p-3 shadow-lux hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between group hover:border-gold"
+              className="flex-shrink-0 w-64 sm:w-80 bg-[#1E110A] border border-[#B88A42]/25 p-3 shadow-2xl hover:border-[#B88A42] hover:bg-[#25140C] transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between group"
             >
               {/* Image Container */}
-              <div className="relative w-full aspect-[4/5] bg-dark/5 overflow-hidden border border-parchment/60">
+              <div className="relative w-full aspect-[4/5] bg-[#120805] overflow-hidden border border-[#B88A42]/20">
                 <Image
                   src={review.image}
                   alt={review.title}
@@ -129,29 +129,29 @@ export function CustomerReviewsSection() {
                 />
                 
                 {/* Hover overlay with zoom prompt */}
-                <div className="absolute inset-0 bg-dark/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white space-y-2 p-4 text-center">
-                  <div className="w-10 h-10 rounded-full bg-gold text-dark flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    <ZoomIn className="w-5 h-5" />
+                <div className="absolute inset-0 bg-[#0B0604]/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white space-y-2 p-4 text-center">
+                  <div className="w-10 h-10 rounded-full bg-[#B88A42] text-[#100805] flex items-center justify-center shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                    <ZoomIn className="w-5 h-5 stroke-[2]" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-cream">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#F4EBDD]">
                     Click to Enlarge
                   </span>
                 </div>
               </div>
 
               {/* Card Footer */}
-              <div className="mt-4 pt-3 border-t border-parchment/60 flex items-center justify-between">
+              <div className="mt-4 pt-3 border-t border-[#B88A42]/20 flex items-center justify-between">
                 <div>
-                  <span className="text-[9px] font-bold uppercase tracking-ultra text-gold block">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#B88A42] block">
                     {review.tag}
                   </span>
-                  <h3 className="font-editorial text-xs font-medium text-dark line-clamp-1 group-hover:text-gold transition-colors">
+                  <h3 className="font-editorial text-xs font-medium text-[#F4EBDD] line-clamp-1 group-hover:text-[#D09A4E] transition-colors">
                     {review.title}
                   </h3>
                 </div>
-                <div className="flex text-gold">
+                <div className="flex text-[#B88A42]">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-gold" />
+                    <Star key={i} className="w-3 h-3 fill-[#B88A42]" />
                   ))}
                 </div>
               </div>
@@ -163,32 +163,33 @@ export function CustomerReviewsSection() {
       {/* Lightbox Zoom Modal */}
       {activeReview && (
         <div
-          className="fixed inset-0 z-50 bg-obsidian/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
+          className="fixed inset-0 z-50 bg-[#0B0604]/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-fade-in"
           onClick={() => setActiveReview(null)}
         >
           <div
-            className="relative max-w-4xl w-full max-h-[90vh] bg-dark border border-gold/40 p-4 sm:p-6 shadow-2xl flex flex-col items-center justify-center overflow-hidden"
+            className="relative max-w-4xl w-full max-h-[90vh] bg-[#140C08] border border-[#B88A42]/40 p-4 sm:p-6 shadow-2xl flex flex-col items-center justify-center overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="w-full flex justify-between items-center pb-4 mb-4 border-b border-gold/20">
+            <div className="w-full flex justify-between items-center pb-4 mb-4 border-b border-[#B88A42]/20">
               <div className="flex items-center space-x-2">
-                <Quote className="w-5 h-5 text-gold" />
-                <span className="font-serif text-lg font-bold text-cream uppercase tracking-wider">
+                <Quote className="w-5 h-5 text-[#B88A42]" />
+                <span className="font-editorial text-lg font-bold text-[#F4EBDD] uppercase tracking-wider">
                   {activeReview.title}
                 </span>
               </div>
               <button
                 onClick={() => setActiveReview(null)}
-                className="p-2 text-parchment/60 hover:text-gold transition-colors rounded-full hover:bg-gold/10"
+                className="p-2 text-[#B9AA99] hover:text-[#B88A42] transition-colors rounded-full hover:bg-[#B88A42]/10"
                 aria-label="Close modal"
+                suppressHydrationWarning
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
 
             {/* Modal Image */}
-            <div className="relative w-full h-[65vh] sm:h-[75vh] bg-dark/80 rounded border border-parchment/20 flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-[65vh] sm:h-[75vh] bg-[#0B0604] rounded border border-[#B88A42]/20 flex items-center justify-center overflow-hidden">
               <Image
                 src={activeReview.image}
                 alt={activeReview.title}
@@ -199,11 +200,11 @@ export function CustomerReviewsSection() {
             </div>
 
             {/* Modal Footer */}
-            <div className="w-full pt-4 mt-2 flex justify-between items-center text-xs text-parchment/60 font-light">
+            <div className="w-full pt-4 mt-2 flex justify-between items-center text-xs text-[#B9AA99] font-light">
               <span>Client Review Screenshot</span>
-              <div className="flex items-center space-x-1 text-gold">
+              <div className="flex items-center space-x-1 text-[#B88A42]">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-gold" />
+                  <Star key={i} className="w-3.5 h-3.5 fill-[#B88A42]" />
                 ))}
               </div>
             </div>

@@ -43,6 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en-IN"
+      suppressHydrationWarning
       className={`${cormorant.variable} ${manrope.variable} h-full antialiased selection:bg-[#C5A059] selection:text-white`}
     >
       <head>
@@ -52,7 +53,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-icon.png?v=3" />
         <link rel="shortcut icon" href="/favicon.png?v=3" />
       </head>
-      <body className="min-h-full flex flex-col bg-[#FAF7F2] text-[#1F1610] font-sans">
+      <body className="min-h-full flex flex-col bg-[#FAF7F2] text-[#1F1610] font-sans" suppressHydrationWarning>
         <QueryProvider>
           <AuthProvider>
             {children}

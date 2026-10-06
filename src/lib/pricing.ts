@@ -8,6 +8,8 @@ export const PRICING_CONFIG = {
   defaultShippingFee: 80,       // Standard Kerala shipping fee in INR
   keralaShippingFee: 80,        // Inside Kerala
   outOfKeralaShippingFee: 100,  // Outside Kerala
+  keralaDeliveryTime: '3 Days',        // Estimated delivery inside Kerala
+  outOfKeralaDeliveryTime: '5-6 Days', // Estimated delivery outside Kerala
   freeShippingThreshold: 1500,  // Orders above ₹1500 get free shipping
 };
 
@@ -21,6 +23,18 @@ export const calculateShippingFee = (state?: string): number => {
     return PRICING_CONFIG.keralaShippingFee;
   }
   return PRICING_CONFIG.outOfKeralaShippingFee;
+};
+
+/**
+ * Get estimated delivery timeline based on state location.
+ */
+export const getEstimatedDeliveryTime = (state?: string): string => {
+  if (!state) return PRICING_CONFIG.keralaDeliveryTime;
+  const normalized = state.trim().toLowerCase();
+  if (normalized === 'kerala' || normalized.includes('kerala')) {
+    return PRICING_CONFIG.keralaDeliveryTime;
+  }
+  return PRICING_CONFIG.outOfKeralaDeliveryTime;
 };
 
 /**

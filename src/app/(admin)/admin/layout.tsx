@@ -24,6 +24,7 @@ import {
   LogOut,
   Gift
 } from 'lucide-react';
+import { PwaRegister } from '@/components/admin/pwa-register';
 
 const adminModules = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -85,6 +86,15 @@ export default function AdminLayout({
     return <>{children}</>;
   }
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/v1/auth/logout', { method: 'POST' });
+    } catch (err) {
+      // ignore
+    }
+    window.location.href = '/secret-admin';
+  };
+
   return (
     <div className="flex h-screen bg-cream text-dark-slate overflow-hidden">
       
@@ -135,6 +145,16 @@ export default function AdminLayout({
                 );
               })}
             </nav>
+            {/* Mobile Footer */}
+            <div className="flex-shrink-0 border-t border-parchment/10 p-4 space-y-2">
+              <button
+                onClick={handleLogout}
+                className="group flex w-full items-center px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-red-400 hover:text-red-300 transition-colors"
+              >
+                <LogOut className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-300" />
+                Sign Out Admin
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -172,14 +192,20 @@ export default function AdminLayout({
             })}
           </nav>
           {/* Footer of Sidebar */}
-          <div className="flex-shrink-0 flex border-t border-parchment/10 p-4">
+          <div className="flex-shrink-0 flex flex-col border-t border-parchment/10 p-4 space-y-1">
             <a
               href={storefrontUrl}
               className="group flex w-full items-center px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-parchment/60 hover:text-cream transition-colors"
             >
-              <LogOut className="mr-3 h-4 w-4 text-parchment/40 group-hover:text-cream" />
               Exit to Store
             </a>
+            <button
+              onClick={handleLogout}
+              className="group flex w-full items-center px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-red-400 hover:text-red-300 transition-colors"
+            >
+              <LogOut className="mr-3 h-4 w-4 text-red-400 group-hover:text-red-300" />
+              Sign Out
+            </button>
           </div>
         </div>
       </div>
@@ -197,11 +223,22 @@ export default function AdminLayout({
           </button>
           
           <div className="flex flex-1 items-center justify-end">
-            <div className="flex items-center space-x-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-dark/75">Administrator</span>
-              <div className="h-8 w-8 rounded-full bg-dark text-cream flex items-center justify-center font-serif font-black text-xs border border-gold/40">
-                A
+            <div className="flex items-center space-x-4">
+              <PwaRegister />
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-dark/75">Administrator</span>
+                <div className="h-8 w-8 rounded-full bg-dark text-cream flex items-center justify-center font-serif font-black text-xs border border-gold/40">
+                  A
+                </div>
               </div>
+              <button
+                onClick={handleLogout}
+                className="px-3 py-1.5 bg-dark text-gold hover:bg-dark/90 text-[9px] font-bold uppercase tracking-wider transition-colors flex items-center space-x-1 border border-gold/30"
+                title="Sign Out of Admin Session"
+              >
+                <LogOut className="w-3 h-3" />
+                <span>Sign Out</span>
+              </button>
             </div>
           </div>
         </header>

@@ -5,14 +5,14 @@ export const dynamic = 'force-dynamic';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Gift, ArrowRight, Check, ShoppingBag, Eye, Sparkles, MessageCircle, Heart, Briefcase, PartyPopper } from 'lucide-react';
+import { Gift, ArrowRight, Check, ShoppingBag, Sparkles, MessageCircle, Heart, Briefcase, PartyPopper } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 
 const HAMPER_CATEGORIES = [
   { id: 'ALL', name: 'All Special Hampers', icon: Gift },
-  { id: 'Wedding Hampers', name: 'Wedding Hampers', icon: Heart, desc: 'Luxury handcrafted chocolate favors & wedding return gifts' },
-  { id: 'Corporate / Bulk Hampers', name: 'Corporate & Bulk Gifting', icon: Briefcase, desc: 'Tailored corporate hampers with custom ribbon & company branding' },
-  { id: 'Festival Specials', name: 'Festival Hampers', icon: Sparkles, desc: 'Curated artisanal collections for Diwali, Eid, Christmas & celebrations' },
+  { id: 'Wedding Hampers', name: 'Wedding Favors', icon: Heart, desc: 'Luxury handcrafted chocolate favors & wedding return gifts' },
+  { id: 'Corporate / Bulk Hampers', name: 'Corporate & Bulk', icon: Briefcase, desc: 'Tailored corporate hampers with custom ribbon & company branding' },
+  { id: 'Festival Specials', name: 'Festival Editions', icon: Sparkles, desc: 'Curated artisanal collections for Diwali, Eid, Christmas & celebrations' },
   { id: 'Birthday Hampers', name: 'Birthday Hampers', icon: PartyPopper, desc: 'Delightful birthday chocolate boxes & personalized gift hampers' },
 ];
 
@@ -21,7 +21,7 @@ export default function CustomerHampersPage() {
   const [hampers, setHampers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [addingState, setAddingState] = useState<Record<string, 'idle' | 'adding' | 'success'>>({});
-  const { addItem, openCart, setQuickViewProduct } = useCartStore();
+  const { addItem, openCart } = useCartStore();
 
   useEffect(() => {
     async function loadHampers() {
@@ -67,7 +67,7 @@ export default function CustomerHampersPage() {
       pricingMode: 'FIXED_PRICE',
       price: 1899,
       images: ['/images/hampers/festival-hamper.png'],
-      description: 'Festive artisanal chocolate collection packed with roasted caramel nut rocks, dates chocolates, and gold-foil wrapped delight bars for Diwali, Eid & Christmas.',
+      description: 'Festive artisanal chocolate collection packed with roasted caramel nut rocks, dates chocolates, and gold-foil wrapped delight bars for Diwali, Eid & celebrations.',
     },
     {
       id: 'static-birthday-1',
@@ -118,24 +118,31 @@ export default function CustomerHampersPage() {
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919061107915';
 
   return (
-    <div className="min-h-screen bg-cream text-dark">
-      {/* Hero Header */}
-      <section className="relative py-20 bg-dark text-cream border-b border-gold/30 overflow-hidden">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">
-            Artisanal Gift Collections
-          </span>
-          <h1 className="font-editorial text-4xl sm:text-6xl font-light text-cream">
-            Special Hampers & Custom Gifting
+    <div className="min-h-screen bg-[#100805] text-[#F4EBDD] selection:bg-[#B88A42] selection:text-[#100805]">
+      {/* 1. Header Banner */}
+      <section className="relative pt-24 pb-20 bg-gradient-to-b from-[#0B0604] via-[#140A06] to-[#100805] border-b border-[#B88A42]/20 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(184,138,66,0.12),transparent_70%)] pointer-events-none" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1 border border-[#B88A42]/40 bg-[#170B07] text-[#B88A42] text-[10px] uppercase font-bold tracking-widest">
+            <Sparkles className="w-3 h-3 text-[#D09A4E]" />
+            <span>BESPOKE GIFTING & CELEBRATIONS</span>
+          </div>
+
+          <h1 className="font-editorial text-4xl sm:text-6xl lg:text-7xl font-light text-[#F4EBDD] tracking-tight leading-tight">
+            Special Hampers & <br />
+            <span className="italic font-normal text-[#D09A4E]">Artisanal Gift Boxes</span>
           </h1>
-          <p className="text-xs sm:text-sm text-parchment/80 font-light max-w-2xl mx-auto leading-relaxed">
-            Crafted for weddings, corporate gifting, festivals, birthdays, and cherished milestones. Customized packaging, bespoke flavors, and express nationwide delivery.
+
+          <p className="text-xs sm:text-sm text-[#B9AA99] font-light max-w-2xl mx-auto leading-relaxed">
+            Crafted for weddings, corporate milestones, festivals, and unforgettable moments. 
+            Customized packaging, gold foil finishes, and express nationwide delivery.
           </p>
         </div>
       </section>
 
-      {/* Category Tabs */}
-      <section className="py-8 bg-champagne/40 border-b border-parchment sticky top-20 z-30 backdrop-blur-md">
+      {/* 2. Category Selector */}
+      <section className="py-6 bg-[#0E0604] border-b border-[#B88A42]/20 sticky top-20 z-30 backdrop-blur-xl bg-opacity-95">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-start md:justify-center space-x-3 overflow-x-auto pb-2 scrollbar-none">
             {HAMPER_CATEGORIES.map((cat) => {
@@ -146,13 +153,14 @@ export default function CustomerHampersPage() {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`flex items-center space-x-2 px-5 py-3 text-xs uppercase tracking-wider font-semibold whitespace-nowrap transition-all duration-300 border ${
+                  suppressHydrationWarning
+                  className={`flex items-center space-x-2 px-5 py-2.5 text-xs uppercase tracking-wider font-semibold whitespace-nowrap transition-all duration-300 border ${
                     isActive
-                      ? 'bg-dark text-gold border-gold shadow-md'
-                      : 'bg-white/80 text-dark border-parchment hover:border-gold hover:bg-cream'
+                      ? 'bg-[#B88A42] text-[#100805] border-[#B88A42] shadow-[0_0_20px_rgba(184,138,66,0.3)]'
+                      : 'bg-[#170B07] text-[#F4EBDD]/80 border-[#B88A42]/20 hover:border-[#B88A42]/60 hover:text-[#F4EBDD]'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-gold' : 'text-taupe'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#100805]' : 'text-[#B88A42]'}`} />
                   <span>{cat.name}</span>
                 </button>
               );
@@ -161,27 +169,27 @@ export default function CustomerHampersPage() {
         </div>
       </section>
 
-      {/* Hampers Showcase Catalog */}
-      <section className="py-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* 3. Hampers Catalog Grid */}
+      <section className="py-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="py-24 text-center space-y-4">
-            <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs uppercase tracking-ultra text-taupe font-mono">Curating Luxury Hampers...</p>
+          <div className="py-28 text-center space-y-4">
+            <div className="w-8 h-8 border-2 border-[#B88A42] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs uppercase tracking-widest text-[#B9AA99] font-mono">Curating Luxury Hampers...</p>
           </div>
         ) : filteredHampers.length === 0 ? (
-          <div className="py-20 text-center space-y-6 bg-white border border-parchment p-12 max-w-xl mx-auto">
-            <Gift className="w-12 h-12 text-gold mx-auto stroke-[1.2]" />
-            <h3 className="font-editorial text-2xl font-light text-dark">Custom Hamper Consultation</h3>
-            <p className="text-xs text-taupe font-light leading-relaxed">
-              We specialize in tailor-made hamper designs for weddings, corporate events, and festival celebrations.
+          <div className="py-20 text-center space-y-6 bg-[#1A0D08] border border-[#B88A42]/30 p-12 max-w-xl mx-auto shadow-2xl">
+            <Gift className="w-12 h-12 text-[#B88A42] mx-auto stroke-[1.2]" />
+            <h3 className="font-editorial text-2xl font-light text-[#F4EBDD]">Custom Hamper Consultation</h3>
+            <p className="text-xs text-[#B9AA99] font-light leading-relaxed">
+              We specialize in tailor-made hamper designs for weddings, corporate celebrations, and VIP events.
             </p>
             <a
               href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hi THALF, I would like to inquire about custom special hampers for an event!')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center space-x-2 px-6 py-3.5 bg-dark text-cream hover:bg-gold hover:text-dark text-xs uppercase tracking-ultra font-semibold transition-all duration-300 shadow-md"
+              className="inline-flex items-center space-x-2 px-6 py-3.5 bg-[#B88A42] text-[#100805] hover:bg-[#D09A4E] text-xs uppercase tracking-widest font-semibold transition-all duration-300 shadow-lg"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-400" />
+              <MessageCircle className="w-4 h-4 text-[#100805]" />
               <span>Request Custom Bulk Quote</span>
             </a>
           </div>
@@ -198,76 +206,82 @@ export default function CustomerHampersPage() {
               return (
                 <div
                   key={hamper.id}
-                  className="group bg-white border border-parchment p-6 flex flex-col justify-between shadow-lux hover:shadow-2xl transition-all duration-500"
+                  className="group bg-[#170B07] border border-[#B88A42]/25 hover:border-[#D09A4E]/60 p-6 flex flex-col justify-between transition-all duration-500 shadow-xl hover:shadow-[0_12px_36px_rgba(0,0,0,0.6)] relative"
                 >
                   <div>
+                    {/* Top Badges */}
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-[9px] font-bold uppercase tracking-ultra text-gold border border-gold/40 px-2.5 py-1 bg-cream">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-[#B88A42] border border-[#B88A42]/40 px-2.5 py-1 bg-[#100805]">
                         {hamper.hamperType || 'Special Hamper'}
                       </span>
                       {isQuoteMode ? (
-                        <span className="text-[9px] font-bold uppercase tracking-ultra bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 font-mono">
-                          Custom Quote
+                        <span className="text-[9px] font-bold uppercase tracking-widest bg-[#2E1A10] text-[#D09A4E] border border-[#B88A42]/40 px-2.5 py-1 font-mono">
+                          Bespoke Quote
                         </span>
                       ) : (
-                        <span className="text-[9px] font-bold uppercase tracking-ultra bg-emerald-900 text-cream px-2 py-0.5 font-mono">
+                        <span className="text-[9px] font-bold uppercase tracking-widest bg-emerald-950/80 text-emerald-400 border border-emerald-800/40 px-2.5 py-1 font-mono">
                           Ready to Ship
                         </span>
                       )}
                     </div>
 
-                    <div className="relative aspect-[4/3] bg-champagne/20 border border-parchment overflow-hidden mb-6 flex items-center justify-center p-4">
+                    {/* Image Cavity */}
+                    <div className="relative aspect-[4/3] bg-gradient-to-b from-[#100805] to-[#0A0402] border border-[#B88A42]/20 overflow-hidden mb-6 flex items-center justify-center p-4">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(184,138,66,0.12),transparent_65%)] pointer-events-none" />
                       <Image
                         src={imageUrl}
                         alt={hamper.name}
                         fill
                         sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-contain group-hover:scale-105 transition-transform duration-700"
+                        className="object-contain group-hover:scale-105 transition-transform duration-700 ease-out p-2"
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <h3 className="font-editorial text-2xl font-light text-dark group-hover:text-gold transition-colors">
+                    {/* Content */}
+                    <div className="space-y-2.5">
+                      <h3 className="font-editorial text-2xl font-light text-[#F4EBDD] group-hover:text-[#D09A4E] transition-colors leading-snug">
                         {hamper.name}
                       </h3>
-                      <p className="text-xs text-taupe font-light leading-relaxed line-clamp-3">
+                      <p className="text-xs text-[#B9AA99] font-light leading-relaxed line-clamp-3">
                         {hamper.description}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-parchment flex items-center justify-between">
+                  {/* Pricing & CTA */}
+                  <div className="mt-8 pt-5 border-t border-[#B88A42]/20 flex items-center justify-between">
                     <div>
-                      <span className="text-[9px] uppercase tracking-ultra text-taupe block font-mono">Price</span>
-                      <span className="text-xl font-editorial font-bold text-dark">
+                      <span className="text-[9px] uppercase tracking-widest text-[#B9AA99]/80 block font-mono">Price</span>
+                      <span className="text-xl font-editorial font-bold text-[#F4EBDD]">
                         {isQuoteMode
                           ? hamper.startingPrice > 0
                             ? `From ₹${Number(hamper.startingPrice).toLocaleString('en-IN')}`
-                            : 'Quote Only'
+                            : 'Custom Quote'
                           : `₹${Number(hamper.price || 1499).toLocaleString('en-IN')}`}
                       </span>
                     </div>
 
                     {isQuoteMode ? (
                       <a
-                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi THALF, I would like to request a custom quote for ${hamper.name}.`)}`}
+                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi THALF, I would like to request a bespoke quote for ${hamper.name}.`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-5 py-2.5 bg-gold text-dark text-xs uppercase tracking-ultra font-semibold hover:bg-gold-light transition-colors flex items-center space-x-1.5 shadow-sm"
+                        className="px-5 py-2.5 bg-[#B88A42] text-[#100805] text-xs uppercase tracking-widest font-semibold hover:bg-[#D09A4E] transition-colors flex items-center space-x-1.5 shadow-md"
                       >
                         <MessageCircle className="w-3.5 h-3.5" />
-                        <span>Enquire Quote</span>
+                        <span>Enquire</span>
                       </a>
                     ) : (
                       <button
                         disabled={currentState === 'adding'}
                         onClick={(e) => handleAddHamperToBag(hamper, e)}
+                        suppressHydrationWarning
                         className={`px-5 py-2.5 text-xs uppercase tracking-wider font-semibold transition-all duration-300 flex items-center space-x-1.5 ${
                           currentState === 'success'
-                            ? 'bg-emerald-800 text-white'
+                            ? 'bg-emerald-700 text-white'
                             : currentState === 'adding'
-                            ? 'bg-gold/80 text-dark opacity-80'
-                            : 'bg-dark text-cream hover:bg-gold hover:text-dark'
+                            ? 'bg-[#B88A42]/80 text-[#100805] opacity-80'
+                            : 'bg-[#B88A42] text-[#100805] hover:bg-[#D09A4E] hover:shadow-[0_0_15px_rgba(184,138,66,0.3)]'
                         }`}
                       >
                         {currentState === 'adding' ? (
@@ -287,23 +301,28 @@ export default function CustomerHampersPage() {
         )}
       </section>
 
-      {/* Corporate & Bulk Banner */}
-      <section className="py-20 bg-dark text-cream border-t border-gold/30">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">Bespoke Enterprise Service</span>
-          <h2 className="font-editorial text-3xl sm:text-5xl font-light">Custom Corporate & Wedding Orders</h2>
-          <p className="text-xs sm:text-sm text-parchment/80 font-light leading-relaxed max-w-2xl mx-auto">
-            Need custom ribbons, engraved boxes, custom branded cards, or bulk orders above 50 units? Our concierge team builds custom chocolate hampers tailored to your brand identity or wedding aesthetic.
+      {/* 4. Corporate & Wedding Concierge Banner */}
+      <section className="py-24 bg-gradient-to-b from-[#100805] to-[#080403] border-t border-[#B88A42]/20">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A42] block">
+            BESPOKE ENTERPRISE & WEDDING ATELIER
+          </span>
+          <h2 className="font-editorial text-3xl sm:text-5xl font-light text-[#F4EBDD]">
+            Custom Corporate & Wedding Orders
+          </h2>
+          <p className="text-xs sm:text-sm text-[#B9AA99] font-light leading-relaxed max-w-2xl mx-auto">
+            Need custom foil stamping, silk ribbons, engraved keepsake boxes, or bulk curation above 50 units? 
+            Our master chocolatiers work directly with your team to deliver unmatched elegance.
           </p>
-          <div className="pt-2 flex justify-center items-center space-x-4">
+          <div className="pt-4 flex justify-center items-center space-x-4">
             <a
               href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hi THALF Concierge, I need custom corporate/wedding hampers for an upcoming event.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 bg-gold text-dark hover:bg-gold-light text-xs font-semibold uppercase tracking-ultra transition-all duration-300 shadow-xl flex items-center space-x-2"
+              className="px-8 py-4 bg-[#B88A42] text-[#100805] hover:bg-[#D09A4E] text-xs font-semibold uppercase tracking-widest transition-all duration-300 shadow-xl flex items-center space-x-2"
             >
-              <MessageCircle className="w-4 h-4 text-emerald-950" />
-              <span>Talk to Concierge Team</span>
+              <MessageCircle className="w-4 h-4 text-[#100805]" />
+              <span>Talk to Concierge Atelier</span>
             </a>
           </div>
         </div>

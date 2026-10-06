@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, ShieldCheck, ShieldAlert, Lock } from 'lucide-react';
+import { PwaRegister } from '@/components/admin/pwa-register';
 
 export default function SecretAdminLoginPage() {
   const router = useRouter();
@@ -12,18 +13,39 @@ export default function SecretAdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   // Check if already authenticated as Admin
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('logout') === 'true') {
+      fetch('/api/v1/auth/logout', { method: 'POST' }).finally(() => {
+        setCurrentUser(null);
+      });
+      return;
+    }
+
     fetch('/api/v1/auth/me')
       .then(res => res.json())
       .then(data => {
         if (data.success && ['ADMIN', 'SUPER_ADMIN', 'CONCIERGE'].includes(data.user?.role)) {
-          router.push('/admin/orders');
+          setCurrentUser(data.user);
         }
       })
       .catch(() => {});
   }, [router]);
+
+  const handleLogoutAndSwitch = async () => {
+    setLoading(true);
+    try {
+      await fetch('/api/v1/auth/logout', { method: 'POST' });
+    } catch (err) {
+      // ignore
+    } finally {
+      setCurrentUser(null);
+      setLoading(false);
+    }
+  };
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,12 +98,32 @@ export default function SecretAdminLoginPage() {
           <p className="mt-1 text-xs text-parchment/60 font-light">
             Authorized personnel access only
           </p>
+          <div className="flex justify-center mt-4">
+            <PwaRegister />
+          </div>
         </div>
 
-        {error && (
-          <div className="p-3 border border-red-500/50 bg-red-950/40 text-red-200 text-xs text-center flex items-center justify-center space-x-2">
-            <ShieldAlert className="w-4 h-4 text-red-400 flex-shrink-0" />
-            <span>{error}</span>
+        {currentUser && (
+          <div className="p-4 border border-gold/40 bg-gold/10 text-cream space-y-3 text-center">
+            <p className="text-xs text-parchment font-light">
+              Currently signed in as <strong className="text-gold font-mono">{currentUser.phone || currentUser.name || 'Admin User'}</strong> ({currentUser.role}).
+            </p>
+            <div className="flex items-center justify-center space-x-3 pt-1">
+              <button
+                type="button"
+                onClick={() => router.push('/admin/orders')}
+                className="px-4 py-2 bg-gold text-dark text-xs font-bold uppercase tracking-wider hover:bg-gold/90 transition-colors"
+              >
+                Go to Dashboard
+              </button>
+              <button
+                type="button"
+                onClick={handleLogoutAndSwitch}
+                className="px-4 py-2 border border-red-500/60 text-red-300 text-xs font-bold uppercase tracking-wider hover:bg-red-950/40 transition-colors"
+              >
+                Sign Out & Switch Account
+              </button>
+            </div>
           </div>
         )}
 

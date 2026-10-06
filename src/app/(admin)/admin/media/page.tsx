@@ -66,12 +66,27 @@ export default function AdminMediaPage() {
   const [mediaToDelete, setMediaToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const safeFetchJson = async (url: string, options?: RequestInit) => {
+    const res = await fetch(url, options);
+    if (res.status === 401 || res.status === 403) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/secret-admin?redirect=/admin/media';
+      }
+      throw new Error('Session expired. Redirecting to login...');
+    }
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      throw new Error(`Server returned HTTP ${res.status} (${res.statusText || 'Error'}). Please log in at /secret-admin`);
+    }
+    const data = await res.json();
+    return { res, data };
+  };
+
   const fetchMedia = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/api/v1/admin/media');
-      const data = await res.json();
+      const { res, data } = await safeFetchJson('/api/v1/admin/media');
       if (res.ok && data.success && Array.isArray(data.media)) {
         setMediaList(data.media);
       } else {
@@ -113,12 +128,11 @@ export default function AdminMediaPage() {
         formData.append('file', file);
         formData.append('productId', 'general');
 
-        const res = await fetch('/api/v1/admin/media/upload', {
+        const { res, data } = await safeFetchJson('/api/v1/admin/media/upload', {
           method: 'POST',
           body: formData,
         });
 
-        const data = await res.json();
         if (!res.ok || !data.success) {
           throw new Error(data.error || `Failed to upload ${file.name}`);
         }
@@ -143,10 +157,9 @@ export default function AdminMediaPage() {
     setError(null);
 
     try {
-      const res = await fetch(`/api/v1/admin/media/${mediaToDelete}`, {
+      const { res, data } = await safeFetchJson(`/api/v1/admin/media/${mediaToDelete}`, {
         method: 'DELETE',
       });
-      const data = await res.json();
 
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Failed to delete media asset.');

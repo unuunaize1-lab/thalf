@@ -3,10 +3,13 @@ import { requirePermission } from '@/lib/auth-guard';
 import { MediaService } from '@/services/media.service';
 
 export async function GET(req: NextRequest) {
-  const { session, errorResponse } = await requirePermission(req, 'products.read');
-  if (errorResponse || !session) return errorResponse;
-
   try {
+    const { session, errorResponse } = await requirePermission(req, 'products.read');
+    if (errorResponse) return errorResponse;
+    if (!session) {
+      return NextResponse.json({ success: false, error: 'Unauthorized session' }, { status: 401 });
+    }
+
     const mediaList = await MediaService.getAllMedia();
     const formatted = mediaList.map((m) => ({
       id: m.id,
@@ -16,11 +19,12 @@ export async function GET(req: NextRequest) {
       size: m.size >= 1024 * 1024
         ? `${(m.size / (1024 * 1024)).toFixed(1)} MB`
         : `${(m.size / 1024).toFixed(0)} KB`,
-      createdAt: m.createdAt.toISOString().split('T')[0],
+      createdAt: m.createdAt ? m.createdAt.toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     }));
 
     return NextResponse.json({ success: true, media: formatted });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    console.error('[AdminMediaAPI] GET error:', err);
+    return NextResponse.json({ success: false, error: err.message || 'Internal Server Error' }, { status: 500 });
   }
 }

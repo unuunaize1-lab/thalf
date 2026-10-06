@@ -3,77 +3,84 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Check } from 'lucide-react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 
 export default function CraftPage() {
   const craftPoints = [
     {
       step: '01',
-      title: 'Carefully Selected Cocoa & Ingredients',
-      desc: 'We select cocoa beans and ingredients with care to ensure balanced flavor profiles and exceptional consistency.',
+      title: 'Carefully Selected Cocoa & Single-Origin Harvests',
+      desc: 'We select cocoa beans and whole nuts with precision to ensure balanced flavor notes, rich butter consistency, and deep chocolate depth.',
     },
     {
       step: '02',
       title: 'Recipe Development & Controlled Tempering',
-      desc: 'Formulated to highlight pure chocolate notes without excess sweetness, followed by careful tempering for a glossy finish and satisfying snap.',
+      desc: 'Formulated to highlight pure cacao character without excess sweetness, followed by meticulous tempering for an immaculate glossy sheen and crisp snap.',
     },
     {
       step: '03',
-      title: 'Handcrafted Attention to Detail',
-      desc: 'Each chocolate bar, truffle, and praline is hand-finished, ensuring high aesthetic standards before packaging.',
+      title: 'Artisanal Hand-Poured Execution',
+      desc: 'Each chocolate bar, kunafa bonbon, and nut rock cluster is poured, layered, and hand-finished with meticulous attention to detail.',
     },
     {
       step: '04',
-      title: 'Thoughtful Presentation',
-      desc: 'Packed in signature presentation boxes, designed to make unboxing feel personal and memorable.',
+      title: 'Cinematic Presentation & Gold Accents',
+      desc: 'Enclosed in signature chocolate presentation boxes with gold foil touches, designed to turn unboxing into a treasured sensorial ritual.',
     },
   ];
 
   return (
-    <div className="bg-cream text-dark min-h-screen pb-24">
+    <div className="bg-[#100805] text-[#F4EBDD] min-h-screen pb-24 selection:bg-[#B88A42] selection:text-[#100805]">
       {/* 1. Hero Header */}
-      <section className="bg-obsidian text-champagne border-b border-gold/20 py-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(197,160,89,0.15),_transparent_70%)] pointer-events-none" />
+      <section className="bg-gradient-to-b from-[#080403] via-[#120704] to-[#100805] border-b border-[#B88A42]/20 pt-28 pb-20 px-4 sm:px-6 lg:px-8 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(184,138,66,0.15),transparent_70%)] pointer-events-none" />
         
         <div className="relative z-10 max-w-4xl mx-auto space-y-4">
-          <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block border border-gold/30 px-3 py-1 inline-block bg-dark/40">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A42] border border-[#B88A42]/40 px-3 py-1 inline-block bg-[#170B07]">
             CRAFTED WITH PURPOSE
           </span>
 
-          <h1 className="font-editorial text-4xl sm:text-6xl font-light text-cream leading-tight">
+          <h1 className="font-editorial text-4xl sm:text-6xl lg:text-7xl font-light text-[#F4EBDD] leading-tight">
             Handcrafted Chocolate.<br />
-            <span className="poetic-italic gold-gradient-text font-normal">Thoughtfully Presented.</span>
+            <span className="italic font-normal text-[#D09A4E]">Sensually Realized.</span>
           </h1>
 
-          <p className="text-xs sm:text-base text-taupe font-light max-w-2xl mx-auto leading-relaxed">
-            From recipe development to final presentation, every detail is considered to deliver a premium chocolate experience.
+          <p className="text-xs sm:text-base text-[#B9AA99] font-light max-w-2xl mx-auto leading-relaxed">
+            From bean selection and slow conching to our signature gold packaging, 
+            every step is performed with intent and deep culinary reverence.
           </p>
         </div>
       </section>
 
       {/* 2. Our Story Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl border-b border-parchment/60">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl border-b border-[#B88A42]/20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           <div className="lg:col-span-6 space-y-6">
-            <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">
-              Our Story
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A42] block">
+              THE PHILOSOPHY
             </span>
-            <h2 className="font-editorial text-4xl sm:text-5xl font-light text-dark leading-tight">
-              Simple Ideas, Memorable Moments
+            <h2 className="font-editorial text-4xl sm:text-5xl font-light text-[#F4EBDD] leading-tight">
+              Quiet Luxury, <br />
+              <span className="text-[#D09A4E] italic font-normal">Memorable Moments</span>
             </h2>
-            <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed">
-              THALF was created with a simple idea—to make enjoying premium handmade chocolate feel truly special. We believe great chocolate isn&apos;t rushed. Every collection is thoughtfully crafted to create memorable moments.
+            <p className="text-xs sm:text-sm text-[#B9AA99] font-light leading-relaxed">
+              THALF was founded on a simple conviction: true luxury chocolate requires patience, uncompromising raw ingredients, and heartfelt craftsmanship. We do not rush batch times or use synthetic preservatives.
+            </p>
+            <p className="text-xs sm:text-sm text-[#B9AA99] font-light leading-relaxed">
+              Every creation is made to evoke memories—the warmth of roasted nuts, the golden crunch of toasted kunafa, and the velvety decadence of fine dark chocolate.
             </p>
           </div>
 
-          <div className="lg:col-span-6 relative aspect-[4/3] border border-parchment p-3 bg-white shadow-xl">
-            <Image
-              src="/images/cacao-harvest.png"
-              alt="Crafted with Purpose"
-              fill
-              className="object-cover"
-            />
+          <div className="lg:col-span-6 relative aspect-[4/3] border border-[#B88A42]/30 p-2 bg-[#170B07] shadow-2xl">
+            <div className="relative w-full h-full overflow-hidden">
+              <Image
+                src="/images/cacao-harvest.png"
+                alt="Crafted with Purpose"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
 
         </div>
@@ -82,22 +89,22 @@ export default function CraftPage() {
       {/* 3. The 4 Pillars of Crafting */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
-          <span className="text-[10px] font-bold uppercase tracking-ultra text-gold block">
-            Crafted with Purpose
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B88A42] block">
+            THE METHODOLOGY
           </span>
-          <h2 className="font-editorial text-4xl sm:text-5xl font-light text-dark">
+          <h2 className="font-editorial text-4xl sm:text-5xl font-light text-[#F4EBDD]">
             Our Approach to Crafting
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {craftPoints.map((item) => (
-            <div key={item.step} className="p-8 border border-parchment bg-white/70 space-y-4 shadow-sm hover:border-gold transition-colors">
-              <span className="text-xs font-mono font-bold text-gold">STEP {item.step}</span>
-              <h3 className="font-editorial text-2xl font-normal text-dark">
+            <div key={item.step} className="p-8 border border-[#B88A42]/25 bg-[#170B07] space-y-4 shadow-xl hover:border-[#D09A4E]/60 transition-colors">
+              <span className="text-xs font-mono font-bold text-[#B88A42]">STEP {item.step}</span>
+              <h3 className="font-editorial text-2xl font-normal text-[#F4EBDD]">
                 {item.title}
               </h3>
-              <p className="text-xs text-taupe font-light leading-relaxed">
+              <p className="text-xs text-[#B9AA99] font-light leading-relaxed">
                 {item.desc}
               </p>
             </div>
@@ -105,22 +112,21 @@ export default function CraftPage() {
         </div>
       </section>
 
-
-      {/* 5. CTA */}
-      <section className="py-20 bg-obsidian text-champagne border-t border-gold/20">
+      {/* 4. CTA */}
+      <section className="py-24 bg-gradient-to-b from-[#170B07] to-[#080403] border-t border-[#B88A42]/20">
         <div className="mx-auto max-w-4xl px-4 text-center space-y-6">
-          <Sparkles className="w-6 h-6 text-gold mx-auto" />
-          <h2 className="font-editorial text-4xl sm:text-5xl font-light text-cream">
+          <Sparkles className="w-6 h-6 text-[#B88A42] mx-auto" />
+          <h2 className="font-editorial text-4xl sm:text-5xl font-light text-[#F4EBDD]">
             Made for Meaningful Moments
           </h2>
-          <p className="text-xs sm:text-sm text-taupe font-light leading-relaxed">
-            Whether it&apos;s a celebration or a personal indulgence, THALF chocolates are crafted with care.
+          <p className="text-xs sm:text-sm text-[#B9AA99] font-light leading-relaxed max-w-xl mx-auto">
+            Whether it&apos;s an intimate evening indulgence or an opulent gift for someone special, experience THALF chocolate.
           </p>
 
           <div className="pt-4">
             <Link
               href="/shop"
-              className="px-8 py-4 bg-gold text-dark hover:bg-gold-light text-xs uppercase tracking-ultra font-semibold transition-all duration-300 inline-flex items-center space-x-2"
+              className="px-8 py-4 bg-[#B88A42] text-[#100805] hover:bg-[#D09A4E] text-xs uppercase tracking-widest font-semibold transition-all duration-300 inline-flex items-center space-x-2 shadow-lg"
             >
               <span>Explore Collection</span>
               <ArrowRight className="w-4 h-4" />
@@ -128,7 +134,6 @@ export default function CraftPage() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }

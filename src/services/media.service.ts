@@ -27,49 +27,58 @@ export class MediaService {
    * Get all media assets from Media library table (with auto-seeding default assets if empty)
    */
   static async getAllMedia() {
-    let mediaList = await MediaRepository.findAllMedia();
+    try {
+      let mediaList = await MediaRepository.findAllMedia();
 
-    if (mediaList.length === 0) {
-      const initialAssets = [
-        {
-          filename: 'date-chocolate.jpeg',
-          url: '/images/choclates/date-chocolate.jpeg',
-          mimeType: 'image/jpeg',
-          size: 55087,
-        },
-        {
-          filename: 'dates-chocolate.jpeg',
-          url: '/images/choclates/dates-chocolate.jpeg',
-          mimeType: 'image/jpeg',
-          size: 47222,
-        },
-        {
-          filename: 'kunafa-pistachio.jpeg',
-          url: '/images/choclates/kunafa-pistachio.jpeg',
-          mimeType: 'image/jpeg',
-          size: 47771,
-        },
-        {
-          filename: 'lollypop.jpeg',
-          url: '/images/choclates/lollypop.jpeg',
-          mimeType: 'image/jpeg',
-          size: 47919,
-        },
-        {
-          filename: 'rock-chocolate.jpeg',
-          url: '/images/choclates/rock-chocolate.jpeg',
-          mimeType: 'image/jpeg',
-          size: 54692,
-        },
-      ];
+      if (!mediaList || mediaList.length === 0) {
+        const initialAssets = [
+          {
+            filename: 'date-chocolate.jpeg',
+            url: '/images/choclates/date-chocolate.jpeg',
+            mimeType: 'image/jpeg',
+            size: 55087,
+          },
+          {
+            filename: 'dates-chocolate.jpeg',
+            url: '/images/choclates/dates-chocolate.jpeg',
+            mimeType: 'image/jpeg',
+            size: 47222,
+          },
+          {
+            filename: 'kunafa-pistachio.jpeg',
+            url: '/images/choclates/kunafa-pistachio.jpeg',
+            mimeType: 'image/jpeg',
+            size: 47771,
+          },
+          {
+            filename: 'lollypop.jpeg',
+            url: '/images/choclates/lollypop.jpeg',
+            mimeType: 'image/jpeg',
+            size: 47919,
+          },
+          {
+            filename: 'rock-chocolate.jpeg',
+            url: '/images/choclates/rock-chocolate.jpeg',
+            mimeType: 'image/jpeg',
+            size: 54692,
+          },
+        ];
 
-      for (const asset of initialAssets) {
-        await MediaRepository.createMediaAsset(asset);
+        for (const asset of initialAssets) {
+          try {
+            await MediaRepository.createMediaAsset(asset);
+          } catch (e) {
+            // ignore individual seed failures
+          }
+        }
+        mediaList = await MediaRepository.findAllMedia();
       }
-      mediaList = await MediaRepository.findAllMedia();
-    }
 
-    return mediaList;
+      return mediaList || [];
+    } catch (err: any) {
+      console.error('[MediaService] getAllMedia exception:', err);
+      return [];
+    }
   }
 
   /**
