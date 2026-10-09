@@ -1,9 +1,12 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
+const DEFAULT_KEY_ID = 'rzp_test_TltSSJaQwEeCME';
+const DEFAULT_KEY_SECRET = 'yNqrVxmKSYmjWrHD3GSa33yH';
+
 function getRazorpayInstance() {
-  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  const keyId = (process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || DEFAULT_KEY_ID).trim();
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || DEFAULT_KEY_SECRET).trim();
 
   if (!keyId || !keySecret) {
     return null;
@@ -20,8 +23,8 @@ export class RazorpayService {
    * Check if Razorpay keys are configured
    */
   static isConfigured(): boolean {
-    const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID;
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const keyId = (process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || DEFAULT_KEY_ID).trim();
+    const keySecret = (process.env.RAZORPAY_KEY_SECRET || DEFAULT_KEY_SECRET).trim();
     return Boolean(keyId && keySecret);
   }
 
@@ -29,7 +32,8 @@ export class RazorpayService {
    * Get public Razorpay key ID for client checkout SDK
    */
   static getKeyId(): string | null {
-    return process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || null;
+    const keyId = (process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || DEFAULT_KEY_ID).trim();
+    return keyId || null;
   }
 
   /**
@@ -61,7 +65,7 @@ export class RazorpayService {
     razorpayPaymentId: string,
     razorpaySignature: string
   ): boolean {
-    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+    const keySecret = (process.env.RAZORPAY_KEY_SECRET || DEFAULT_KEY_SECRET).trim();
     if (!keySecret) {
       throw new Error('Razorpay key secret missing');
     }

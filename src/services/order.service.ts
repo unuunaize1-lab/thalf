@@ -136,6 +136,7 @@ export class OrderService {
     // 3. Create Razorpay Order if configured
     let razorpayOrderId: string | null = null;
     let razorpayKeyId: string | null = null;
+    let razorpayError: string | null = null;
 
     if (RazorpayService.isConfigured()) {
       try {
@@ -144,7 +145,10 @@ export class OrderService {
         razorpayKeyId = RazorpayService.getKeyId();
       } catch (err: any) {
         console.error('[OrderService] Razorpay order creation error:', err?.message || err);
+        razorpayError = err?.message || 'Failed to initialize Razorpay payment order';
       }
+    } else {
+      razorpayError = 'Razorpay API keys (NEXT_PUBLIC_RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) not configured on the server.';
     }
 
     return {
@@ -154,6 +158,7 @@ export class OrderService {
       totalAmount,
       razorpayOrderId,
       razorpayKeyId,
+      razorpayError,
     };
   }
 

@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  env: {
+    NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TltSSJaQwEeCME',
+    RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || 'yNqrVxmKSYmjWrHD3GSa33yH',
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'https://thalf-chocolates.vercel.app',
+    NEXT_PUBLIC_WHATSAPP_NUMBER: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '919061107915',
+  },
   images: {
     remotePatterns: [
       {

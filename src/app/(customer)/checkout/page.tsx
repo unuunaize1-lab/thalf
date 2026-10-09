@@ -176,15 +176,33 @@ export default function CheckoutPage() {
   // Order confirmation state
   const [confirmation, setConfirmation] = useState<OrderConfirmation | null>(null);
 
-  // Dynamically load Razorpay SDK
-  useEffect(() => {
-    if (!document.getElementById('razorpay-checkout-js')) {
+  // Helper to load Razorpay checkout SDK
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window === 'undefined') return resolve(false);
+      if ((window as any).Razorpay) return resolve(true);
+
+      const existingScript = document.getElementById('razorpay-checkout-js') as HTMLScriptElement | null;
+      if (existingScript) {
+        if ((window as any).Razorpay) return resolve(true);
+        existingScript.addEventListener('load', () => resolve(true));
+        existingScript.addEventListener('error', () => resolve(false));
+        return;
+      }
+
       const script = document.createElement('script');
       script.id = 'razorpay-checkout-js';
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
       document.body.appendChild(script);
-    }
+    });
+  };
+
+  // Pre-load Razorpay SDK on mount
+  useEffect(() => {
+    loadRazorpayScript();
   }, []);
 
   // Session autofill for authenticated customers
@@ -269,13 +287,27 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'Failed to place order. Please try again.');
       }
 
-      // 2. If Razorpay payment is selected & Razorpay order is returned -> Launch Razorpay Popup
-      if (
-        paymentMethod === 'RAZORPAY' &&
-        data.razorpayOrderId &&
-        (data.razorpayKeyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID)
-      ) {
-        const keyId = data.razorpayKeyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      // 2. If Razorpay payment is selected -> Launch Razorpay Popup
+      if (paymentMethod === 'RAZORPAY') {
+        if (!data.razorpayOrderId) {
+          setIsSubmitting(false);
+          setErrorMessage(
+            data.razorpayError ||
+            'Razorpay payment could not be initialized. Please check your Razorpay environment variables (NEXT_PUBLIC_RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET).'
+          );
+          return;
+        }
+
+        const isLoaded = await loadRazorpayScript();
+        const RazorpayWindow = (window as any).Razorpay;
+
+        if (!isLoaded || !RazorpayWindow) {
+          setIsSubmitting(false);
+          setErrorMessage('Unable to load Razorpay payment SDK. Please verify your network and try again.');
+          return;
+        }
+
+        const keyId = data.razorpayKeyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TltSSJaQwEeCME';
 
         const options = {
           key: keyId,
@@ -341,15 +373,16 @@ export default function CheckoutPage() {
           },
         };
 
-        const RazorpayWindow = (window as any).Razorpay;
-        if (RazorpayWindow) {
-          const rzp = new RazorpayWindow(options);
-          rzp.open();
-          return;
-        }
+        const rzp = new RazorpayWindow(options);
+        rzp.on('payment.failed', function (resp: any) {
+          setIsSubmitting(false);
+          setErrorMessage(resp.error?.description || 'Payment was declined or failed.');
+        });
+        rzp.open();
+        return;
       }
 
-      // 3. Fallback or WhatsApp payment selection
+      // 3. WhatsApp payment selection
       clearCart();
       setConfirmation({
         orderId: data.orderId,
